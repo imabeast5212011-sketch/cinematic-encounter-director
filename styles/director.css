@@ -10,11 +10,30 @@
   --ced-danger: #ff6b6b;
   --ced-focus: #9ad7ff;
   color: var(--ced-text);
+  min-height: 0;
 }
 
 .cinematic-encounter-director * {
   box-sizing: border-box;
   letter-spacing: 0;
+}
+
+.cinematic-encounter-director .window-content,
+.cinematic-encounter-director .application-content,
+.cinematic-encounter-director [data-application-part] {
+  min-height: 0;
+}
+
+.cinematic-encounter-director .window-content,
+.cinematic-encounter-director .application-content {
+  overflow-x: hidden !important;
+  overflow-y: auto !important;
+}
+
+.cinematic-encounter-director [data-application-part] {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
 }
 
 .cinematic-encounter-director button,
@@ -67,9 +86,18 @@
   display: flex;
   flex-direction: column;
   gap: 10px;
-  min-height: 100%;
+  flex: 1 1 auto;
+  min-height: 0;
+  max-height: calc(100vh - 56px);
+  overflow-x: hidden;
+  overflow-y: auto;
   background: var(--ced-bg);
   padding: 10px;
+  scrollbar-gutter: stable;
+}
+
+.ced-shell {
+  height: 100%;
 }
 
 .ced-toolbar,
@@ -178,7 +206,7 @@
   display: grid;
   grid-template-columns: minmax(210px, 280px) 1fr;
   gap: 10px;
-  min-height: 320px;
+  min-height: 240px;
 }
 
 .ced-beat-list,
@@ -188,6 +216,15 @@
   background: var(--ced-panel);
   padding: 10px;
   min-width: 0;
+  min-height: 0;
+}
+
+.ced-beat-list,
+.ced-beat-panel,
+.ced-actions-list,
+.ced-log ol,
+.ced-health-grid {
+  min-height: 0;
 }
 
 .ced-beat-list h3 {
@@ -295,6 +332,10 @@
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
   gap: 8px;
+  max-height: 280px;
+  max-height: min(38vh, 280px);
+  overflow-y: auto;
+  padding-right: 4px;
 }
 
 .ced-health-item {
@@ -338,12 +379,8 @@
   grid-template-rows: auto;
   grid-template-areas: "sequence beats right";
   align-items: start;
-  max-height: calc(100vh - 72px);
-  min-height: 0;
-  overflow-x: hidden;
-  overflow-y: auto;
-  padding-right: 6px;
-  scrollbar-gutter: stable;
+  height: 100%;
+  max-height: calc(100vh - 56px);
 }
 
 .ced-sequence-panel {
@@ -380,8 +417,16 @@
 
 .ced-action-edit-list {
   min-height: 96px;
-  max-height: 260px;
+  max-height: 220px;
+  max-height: min(32vh, 220px);
   overflow: auto;
+}
+
+.ced-log ol {
+  max-height: 180px;
+  max-height: min(28vh, 180px);
+  overflow-y: auto;
+  padding-right: 4px;
 }
 
 .ced-grid-two {
@@ -458,7 +503,8 @@
     grid-template-areas:
       "sequence beats"
       "right right";
-    max-height: calc(100vh - 72px);
+    height: 100%;
+    max-height: calc(100vh - 56px);
     overflow-x: hidden;
     overflow-y: auto;
   }
