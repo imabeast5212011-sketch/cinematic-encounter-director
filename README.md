@@ -57,12 +57,29 @@ Open the Director as a GM, create a Sequence, then open the editor.
 Use the editor to:
 
 - Rename and describe the Sequence.
+- Bind the Sequence to the currently viewed Scene.
 - Add, duplicate, move, archive, or delete Beats.
 - Add, duplicate, move, enable, disable, edit, or delete Actions.
+- Build a basic combat setup from currently selected canvas Tokens.
+- Add a reinforcement wave from currently selected canvas Tokens.
 - Configure failure policy, execution mode, parallel group, delay, confirmation, and declarative config JSON.
 - Validate a Beat before running it.
 
 Token groups are configured by adding multiple Token UUIDs to native Token actions such as reveal/hide, move, elevation, disposition, or add to Combat. Store stable UUIDs rather than display names.
+
+### Quick Combat Setup
+
+To build a basic combat Beat:
+
+1. Open the Scene in Foundry.
+2. Place the enemy Tokens where they should start.
+3. Select those Tokens on the canvas.
+4. Open the Sequence editor.
+5. Click **Bind Current Scene**.
+6. Click **Add Combat Setup From Selected Tokens**.
+7. Save the Beat, close the editor, validate the Beat, then run it.
+
+That shortcut adds Actions to activate the Scene, reveal the selected Tokens, create Combat, add those Tokens to Combat, and start Combat. Use **Add Reinforcement Wave** for later Beats after selecting the next wave's prepared Tokens.
 
 ## Running Encounters
 

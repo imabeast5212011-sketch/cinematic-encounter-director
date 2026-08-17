@@ -149,7 +149,7 @@ export class SequenceStore {
     return this.mutate(scene, (data) => {
       const sequence = findSequence(data, sequenceId);
       if (!sequence) throw new Error("Sequence was not found.");
-      const allowed = ["name", "description", "startingBeatId", "tags", "gmNotes", "enabled", "archived"];
+      const allowed = ["name", "description", "sceneUuid", "startingBeatId", "tags", "gmNotes", "enabled", "archived"];
       for (const field of allowed) {
         if (Object.hasOwn(patch, field)) sequence[field] = cloneData(patch[field]);
       }

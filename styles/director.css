@@ -25,12 +25,12 @@
 }
 
 .cinematic-encounter-director button {
-  min-height: 30px;
+  min-height: 28px;
   border: 1px solid var(--ced-line);
   border-radius: 6px;
   background: var(--ced-panel-2);
   color: var(--ced-text);
-  padding: 5px 9px;
+  padding: 4px 8px;
   cursor: pointer;
 }
 
@@ -109,11 +109,27 @@
 .ced-row-actions,
 .ced-check-row,
 .ced-add-action,
-.ced-reference-actions {
+.ced-reference-actions,
+.ced-bound-scene,
+.ced-quick-builder {
   display: flex;
   align-items: center;
   flex-wrap: wrap;
   gap: 6px;
+}
+
+.ced-bound-scene,
+.ced-quick-builder {
+  justify-content: space-between;
+  border: 1px solid var(--ced-line);
+  border-radius: 8px;
+  background: #181b22;
+  padding: 8px;
+}
+
+.ced-bound-scene span,
+.ced-quick-builder span {
+  color: var(--ced-muted);
 }
 
 .ced-selector-row,
@@ -126,7 +142,7 @@
   border: 1px solid var(--ced-line);
   border-radius: 8px;
   background: var(--ced-panel);
-  padding: 10px;
+  padding: 8px;
 }
 
 .ced-selector-row {
@@ -318,18 +334,61 @@
 
 .ced-editor-layout {
   display: grid;
-  grid-template-columns: minmax(240px, 320px) 1fr;
-  align-items: start;
+  grid-template-columns: minmax(260px, 320px) minmax(220px, 300px) minmax(380px, 1fr);
+  grid-template-rows: minmax(0, 1fr);
+  grid-template-areas: "sequence beats right";
+  align-items: stretch;
+  height: min(720px, calc(100vh - 96px));
+  min-height: 460px;
+  overflow: hidden;
 }
 
-.ced-editor-wide {
-  grid-column: 1 / -1;
+.ced-sequence-panel {
+  grid-area: sequence;
+}
+
+.ced-beats-panel {
+  grid-area: beats;
+}
+
+.ced-editor-right {
+  grid-area: right;
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+  gap: 10px;
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.ced-sequence-panel,
+.ced-beats-panel,
+.ced-beat-settings-panel,
+.ced-actions-panel {
+  min-width: 0;
+  overflow: auto;
+}
+
+.ced-actions-panel {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.ced-action-edit-list {
+  flex: 1;
+  min-height: 96px;
+  overflow: auto;
 }
 
 .ced-grid-two {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 8px;
+}
+
+.ced-beat-settings-panel .ced-grid-two {
+  grid-template-columns: 1fr 1fr;
 }
 
 .ced-edit-list li {
@@ -386,6 +445,36 @@
 
   .ced-log li {
     grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 1040px) {
+  .ced-editor-layout {
+    grid-template-columns: minmax(240px, 300px) minmax(0, 1fr);
+    grid-template-rows: auto minmax(0, 1fr);
+    grid-template-areas:
+      "sequence beats"
+      "right right";
+    height: auto;
+    overflow: visible;
+  }
+
+  .ced-editor-right {
+    grid-area: right;
+  }
+}
+
+@media (max-width: 760px) {
+  .ced-editor-layout {
+    grid-template-columns: 1fr;
+    grid-template-areas:
+      "sequence"
+      "beats"
+      "right";
+  }
+
+  .ced-editor-right {
+    overflow: visible;
   }
 }
 

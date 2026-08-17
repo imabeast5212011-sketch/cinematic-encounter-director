@@ -2,18 +2,23 @@
 <div class="ced-empty"><strong>GM access required.</strong></div>
 {{else}}
 <div class="ced-editor-layout">
-  <form data-form="sequence" class="ced-editor-panel">
+  <form data-form="sequence" class="ced-editor-panel ced-sequence-panel">
     <header>
       <h2>Sequence</h2>
       <button type="button" data-action="save-sequence"><i class="fa-solid fa-floppy-disk"></i> Save</button>
     </header>
+    <div class="ced-bound-scene">
+      <strong>Scene</strong>
+      <span>{{activeSceneName}}</span>
+      <button type="button" data-action="bind-current-scene"><i class="fa-solid fa-link"></i> Bind Current Scene</button>
+    </div>
     <label>
       <span>Name</span>
       <input type="text" name="name" value="{{sequence.name}}" maxlength="120">
     </label>
     <label>
       <span>Description</span>
-      <textarea name="description" rows="3">{{sequence.description}}</textarea>
+      <textarea name="description" rows="2">{{sequence.description}}</textarea>
     </label>
     <label>
       <span>Tags</span>
@@ -21,7 +26,7 @@
     </label>
     <label>
       <span>GM Notes</span>
-      <textarea name="gmNotes" rows="4">{{sequence.gmNotes}}</textarea>
+      <textarea name="gmNotes" rows="2">{{sequence.gmNotes}}</textarea>
     </label>
     <div class="ced-check-row">
       <label><input type="checkbox" name="enabled" {{#if sequence.enabled}}checked{{/if}}> Enabled</label>
@@ -29,7 +34,7 @@
     </div>
   </form>
 
-  <section class="ced-editor-panel">
+  <section class="ced-editor-panel ced-beats-panel">
     <header>
       <h2>Beats</h2>
       <button type="button" data-action="add-beat"><i class="fa-solid fa-plus"></i> Add Beat</button>
@@ -50,7 +55,8 @@
   </section>
 
   {{#if selectedBeat}}
-  <form data-form="beat" class="ced-editor-panel ced-editor-wide">
+  <div class="ced-editor-right">
+  <form data-form="beat" class="ced-editor-panel ced-beat-settings-panel">
     <header>
       <h2>Selected Beat</h2>
       <button type="button" data-action="save-beat"><i class="fa-solid fa-floppy-disk"></i> Save Beat</button>
@@ -61,7 +67,7 @@
     </label>
     <label>
       <span>Description</span>
-      <textarea name="description" rows="2">{{selectedBeat.description}}</textarea>
+      <textarea name="description" rows="1">{{selectedBeat.description}}</textarea>
     </label>
     <div class="ced-grid-two">
       <label>
@@ -83,7 +89,7 @@
     </label>
     <label>
       <span>GM Notes</span>
-      <textarea name="gmNotes" rows="3">{{selectedBeat.gmNotes}}</textarea>
+      <textarea name="gmNotes" rows="2">{{selectedBeat.gmNotes}}</textarea>
     </label>
     <div class="ced-check-row">
       <label><input type="checkbox" name="requiresConfirmation" {{#if selectedBeat.requiresConfirmation}}checked{{/if}}> Require confirmation</label>
@@ -92,7 +98,7 @@
     </div>
   </form>
 
-  <section class="ced-editor-panel ced-editor-wide">
+  <section class="ced-editor-panel ced-actions-panel">
     <header>
       <h2>Actions</h2>
       <div class="ced-add-action">
@@ -104,6 +110,16 @@
         <button type="button" data-action="add-action"><i class="fa-solid fa-plus"></i> Add Action</button>
       </div>
     </header>
+    <div class="ced-quick-builder" aria-label="Quick encounter builders">
+      <div>
+        <strong>Quick Build</strong>
+        <span>{{selectedTokenCount}} selected Token(s)</span>
+      </div>
+      <div>
+        <button type="button" data-action="add-combat-setup"><i class="fa-solid fa-swords"></i> Add Combat Setup From Selected Tokens</button>
+        <button type="button" data-action="add-reinforcement-wave"><i class="fa-solid fa-user-plus"></i> Add Reinforcement Wave</button>
+      </div>
+    </div>
     <ol class="ced-edit-list ced-action-edit-list">
       {{#each actions}}
       <li>
@@ -126,6 +142,7 @@
       <button type="button" data-action="validate-sequence"><i class="fa-solid fa-magnifying-glass"></i> Validate Beat</button>
     </footer>
   </section>
+  </div>
   {{/if}}
 </div>
 {{/unless}}

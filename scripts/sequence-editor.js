@@ -23,6 +23,14 @@ function notify(result) {
   else ui.notifications?.info(result.message);
 }
 
+function activeScene() {
+  return canvas?.scene ?? game.scenes?.viewed ?? game.scenes?.active ?? game.scenes?.current ?? null;
+}
+
+function controlledTokenDocuments() {
+  return (canvas?.tokens?.controlled ?? []).map((token) => token.document).filter(Boolean);
+}
+
 async function confirmText(title, content) {
   if (globalThis.Dialog?.confirm) {
     return Dialog.confirm({ title, content: `<p>${foundry.utils.escapeHTML(content)}</p>`, defaultYes: false });
@@ -41,7 +49,7 @@ export class SequenceEditor extends HandlebarsApplicationMixin(ApplicationV2) {
       resizable: true
     },
     position: {
-      width: 940,
+      width: 1180,
       height: 720
     }
   };
@@ -80,6 +88,8 @@ export class SequenceEditor extends HandlebarsApplicationMixin(ApplicationV2) {
       actions,
       actionTypes,
       dangerLevels: Object.values(DANGER_LEVELS).map((value) => ({ value, selected: value === selectedBeat?.dangerLevel })),
+      activeSceneName: activeScene()?.name ?? "No active Scene",
+      selectedTokenCount: controlledTokenDocuments().length,
       isGM: Boolean(game.user?.isGM)
     };
   }
@@ -101,6 +111,12 @@ export class SequenceEditor extends HandlebarsApplicationMixin(ApplicationV2) {
       switch (dataset.action) {
         case "save-sequence":
           return this.saveSequence();
+        case "bind-current-scene":
+          return this.bindCurrentScene();
+        case "add-combat-setup":
+          return this.addCombatSetup();
+        case "add-reinforcement-wave":
+          return this.addReinforcementWave();
         case "add-beat":
           return this.addBeat();
         case "select-beat":
@@ -156,6 +172,76 @@ export class SequenceEditor extends HandlebarsApplicationMixin(ApplicationV2) {
       tags: String(data.tags ?? "").split(",").map((tag) => tag.trim()).filter(Boolean)
     });
     notify(createResult(RESULT_STATUS.SUCCESS, "Sequence saved."));
+    this.render({ force: true });
+  }
+
+  async bindCurrentScene() {
+    const scene = activeScene();
+    if (!scene) {
+      notify(createResult(RESULT_STATUS.WARNING, "No active Scene is available to bind."));
+      return;
+    }
+    await this.services.store.updateSequence(this.selectedSequenceId, { sceneUuid: scene.uuid });
+    notify(createResult(RESULT_STATUS.SUCCESS, `Sequence bound to Scene: ${scene.name}`));
+    this.render({ force: true });
+  }
+
+  async appendConfiguredAction(type, name, config, extra = {}) {
+    const defaults = type.startsWith("native.") ? defaultActionPatch(type) : defaultIntegrationActionPatch(type);
+    const action = await this.services.store.createAction(this.selectedSequenceId, this.selectedBeatId, defaults.type, defaults.adapter);
+    await this.services.store.updateAction(this.selectedSequenceId, this.selectedBeatId, action.id, {
+      ...defaults,
+      ...extra,
+      name,
+      config: {
+        ...(defaults.config ?? {}),
+        ...(config ?? {})
+      }
+    });
+    return action;
+  }
+
+  async ensureSelectedBeat() {
+    if (this.selectedBeatId) return this.selectedBeatId;
+    const beat = await this.services.store.createBeat(this.selectedSequenceId);
+    this.selectedBeatId = beat.id;
+    return beat.id;
+  }
+
+  async addCombatSetup() {
+    const scene = activeScene();
+    const tokens = controlledTokenDocuments();
+    if (!scene) {
+      notify(createResult(RESULT_STATUS.WARNING, "No active Scene is available."));
+      return;
+    }
+    if (!tokens.length) {
+      notify(createResult(RESULT_STATUS.WARNING, "Select the encounter Tokens on the canvas first."));
+      return;
+    }
+    await this.ensureSelectedBeat();
+    await this.services.store.updateSequence(this.selectedSequenceId, { sceneUuid: scene.uuid });
+    const tokenUuids = tokens.map((token) => token.uuid);
+    await this.appendConfiguredAction("native.activateScene", `Activate ${scene.name}`, { sceneUuid: scene.uuid }, { requiresConfirmation: true });
+    await this.appendConfiguredAction("native.setTokenVisibility", `Reveal ${tokens.length} encounter Token(s)`, { tokenUuids, hidden: false });
+    await this.appendConfiguredAction("native.createCombat", `Create Combat for ${scene.name}`, { sceneUuid: scene.uuid });
+    await this.appendConfiguredAction("native.addTokensToCombat", `Add ${tokens.length} Token(s) to Combat`, { tokenUuids, createCombatIfMissing: true });
+    await this.appendConfiguredAction("native.startCombat", "Start Combat", {});
+    notify(createResult(RESULT_STATUS.SUCCESS, `Added combat setup for ${tokens.length} selected Token(s).`));
+    this.render({ force: true });
+  }
+
+  async addReinforcementWave() {
+    const tokens = controlledTokenDocuments();
+    if (!tokens.length) {
+      notify(createResult(RESULT_STATUS.WARNING, "Select the reinforcement Tokens on the canvas first."));
+      return;
+    }
+    await this.ensureSelectedBeat();
+    const tokenUuids = tokens.map((token) => token.uuid);
+    await this.appendConfiguredAction("native.setTokenVisibility", `Reveal reinforcement Token(s)`, { tokenUuids, hidden: false });
+    await this.appendConfiguredAction("native.addTokensToCombat", `Add reinforcement Token(s) to Combat`, { tokenUuids, createCombatIfMissing: false });
+    notify(createResult(RESULT_STATUS.SUCCESS, `Added reinforcement wave for ${tokens.length} selected Token(s).`));
     this.render({ force: true });
   }
 
