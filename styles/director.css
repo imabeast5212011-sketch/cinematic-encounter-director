@@ -335,12 +335,15 @@
 .ced-editor-layout {
   display: grid;
   grid-template-columns: minmax(260px, 320px) minmax(220px, 300px) minmax(380px, 1fr);
-  grid-template-rows: minmax(0, 1fr);
+  grid-template-rows: auto;
   grid-template-areas: "sequence beats right";
-  align-items: stretch;
-  height: min(720px, calc(100vh - 96px));
-  min-height: 460px;
-  overflow: hidden;
+  align-items: start;
+  max-height: calc(100vh - 72px);
+  min-height: 0;
+  overflow-x: hidden;
+  overflow-y: auto;
+  padding-right: 6px;
+  scrollbar-gutter: stable;
 }
 
 .ced-sequence-panel {
@@ -354,11 +357,11 @@
 .ced-editor-right {
   grid-area: right;
   display: grid;
-  grid-template-rows: auto minmax(0, 1fr);
+  grid-template-rows: auto auto;
   gap: 10px;
   min-width: 0;
   min-height: 0;
-  overflow: hidden;
+  overflow: visible;
 }
 
 .ced-sequence-panel,
@@ -376,8 +379,8 @@
 }
 
 .ced-action-edit-list {
-  flex: 1;
   min-height: 96px;
+  max-height: 260px;
   overflow: auto;
 }
 
@@ -455,8 +458,9 @@
     grid-template-areas:
       "sequence beats"
       "right right";
-    height: auto;
-    overflow: visible;
+    max-height: calc(100vh - 72px);
+    overflow-x: hidden;
+    overflow-y: auto;
   }
 
   .ced-editor-right {
