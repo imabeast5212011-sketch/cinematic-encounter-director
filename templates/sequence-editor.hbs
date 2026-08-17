@@ -1,0 +1,131 @@
+{{#unless isGM}}
+<div class="ced-empty"><strong>GM access required.</strong></div>
+{{else}}
+<div class="ced-editor-layout">
+  <form data-form="sequence" class="ced-editor-panel">
+    <header>
+      <h2>Sequence</h2>
+      <button type="button" data-action="save-sequence"><i class="fa-solid fa-floppy-disk"></i> Save</button>
+    </header>
+    <label>
+      <span>Name</span>
+      <input type="text" name="name" value="{{sequence.name}}" maxlength="120">
+    </label>
+    <label>
+      <span>Description</span>
+      <textarea name="description" rows="3">{{sequence.description}}</textarea>
+    </label>
+    <label>
+      <span>Tags</span>
+      <input type="text" name="tags" value="{{sequence.tags}}">
+    </label>
+    <label>
+      <span>GM Notes</span>
+      <textarea name="gmNotes" rows="4">{{sequence.gmNotes}}</textarea>
+    </label>
+    <div class="ced-check-row">
+      <label><input type="checkbox" name="enabled" {{#if sequence.enabled}}checked{{/if}}> Enabled</label>
+      <label><input type="checkbox" name="archived" {{#if sequence.archived}}checked{{/if}}> Archived</label>
+    </div>
+  </form>
+
+  <section class="ced-editor-panel">
+    <header>
+      <h2>Beats</h2>
+      <button type="button" data-action="add-beat"><i class="fa-solid fa-plus"></i> Add Beat</button>
+    </header>
+    <ol class="ced-edit-list">
+      {{#each beats}}
+      <li class="{{#if selected}}is-selected{{/if}}">
+        <button type="button" data-action="select-beat" data-beat-id="{{id}}">{{index}}. {{name}}</button>
+        <div>
+          <button type="button" data-action="move-beat" data-beat-id="{{id}}" data-direction="up" title="Move Beat Up" aria-label="Move Beat Up"><i class="fa-solid fa-arrow-up"></i></button>
+          <button type="button" data-action="move-beat" data-beat-id="{{id}}" data-direction="down" title="Move Beat Down" aria-label="Move Beat Down"><i class="fa-solid fa-arrow-down"></i></button>
+          <button type="button" data-action="duplicate-beat" data-beat-id="{{id}}" title="Duplicate Beat" aria-label="Duplicate Beat"><i class="fa-solid fa-copy"></i></button>
+          <button type="button" data-action="delete-beat" data-beat-id="{{id}}" class="ced-danger" title="Delete Beat" aria-label="Delete Beat"><i class="fa-solid fa-trash"></i></button>
+        </div>
+      </li>
+      {{/each}}
+    </ol>
+  </section>
+
+  {{#if selectedBeat}}
+  <form data-form="beat" class="ced-editor-panel ced-editor-wide">
+    <header>
+      <h2>Selected Beat</h2>
+      <button type="button" data-action="save-beat"><i class="fa-solid fa-floppy-disk"></i> Save Beat</button>
+    </header>
+    <label>
+      <span>Name</span>
+      <input type="text" name="name" value="{{selectedBeat.name}}" maxlength="120">
+    </label>
+    <label>
+      <span>Description</span>
+      <textarea name="description" rows="2">{{selectedBeat.description}}</textarea>
+    </label>
+    <div class="ced-grid-two">
+      <label>
+        <span>Color</span>
+        <input type="text" name="color" value="{{selectedBeat.color}}">
+      </label>
+      <label>
+        <span>Icon</span>
+        <input type="text" name="icon" value="{{selectedBeat.icon}}">
+      </label>
+    </div>
+    <label>
+      <span>Danger Level</span>
+      <select name="dangerLevel">
+        {{#each dangerLevels}}
+        <option value="{{value}}" {{#if selected}}selected{{/if}}>{{value}}</option>
+        {{/each}}
+      </select>
+    </label>
+    <label>
+      <span>GM Notes</span>
+      <textarea name="gmNotes" rows="3">{{selectedBeat.gmNotes}}</textarea>
+    </label>
+    <div class="ced-check-row">
+      <label><input type="checkbox" name="requiresConfirmation" {{#if selectedBeat.requiresConfirmation}}checked{{/if}}> Require confirmation</label>
+      <label><input type="checkbox" name="stopPointAfter" {{#if selectedBeat.stopPointAfter}}checked{{/if}}> Stop point after execution</label>
+      <label><input type="checkbox" name="continueOnActionFailure" {{#if selectedBeat.continueOnActionFailure}}checked{{/if}}> Continue after failure</label>
+    </div>
+  </form>
+
+  <section class="ced-editor-panel ced-editor-wide">
+    <header>
+      <h2>Actions</h2>
+      <div class="ced-add-action">
+        <select data-field="new-action-type">
+          {{#each actionTypes}}
+          <option value="{{id}}" {{#if disabled}}disabled{{/if}}>{{label}} - {{providerStatus}}</option>
+          {{/each}}
+        </select>
+        <button type="button" data-action="add-action"><i class="fa-solid fa-plus"></i> Add Action</button>
+      </div>
+    </header>
+    <ol class="ced-edit-list ced-action-edit-list">
+      {{#each actions}}
+      <li>
+        <div>
+          <strong>{{name}}</strong>
+          <span>{{type}}</span>
+        </div>
+        <div>
+          <button type="button" data-action="toggle-action" data-action-id="{{id}}" title="Enable or Disable Action" aria-label="Enable or Disable Action"><i class="fa-solid fa-power-off"></i></button>
+          <button type="button" data-action="move-action" data-action-id="{{id}}" data-direction="up" title="Move Action Up" aria-label="Move Action Up"><i class="fa-solid fa-arrow-up"></i></button>
+          <button type="button" data-action="move-action" data-action-id="{{id}}" data-direction="down" title="Move Action Down" aria-label="Move Action Down"><i class="fa-solid fa-arrow-down"></i></button>
+          <button type="button" data-action="edit-action" data-action-id="{{id}}" title="Edit Action" aria-label="Edit Action"><i class="fa-solid fa-pen"></i></button>
+          <button type="button" data-action="duplicate-action" data-action-id="{{id}}" title="Duplicate Action" aria-label="Duplicate Action"><i class="fa-solid fa-copy"></i></button>
+          <button type="button" data-action="delete-action" data-action-id="{{id}}" class="ced-danger" title="Delete Action" aria-label="Delete Action"><i class="fa-solid fa-trash"></i></button>
+        </div>
+      </li>
+      {{/each}}
+    </ol>
+    <footer>
+      <button type="button" data-action="validate-sequence"><i class="fa-solid fa-magnifying-glass"></i> Validate Beat</button>
+    </footer>
+  </section>
+  {{/if}}
+</div>
+{{/unless}}

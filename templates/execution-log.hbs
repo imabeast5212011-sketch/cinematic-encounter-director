@@ -1,0 +1,12 @@
+<section class="ced-log" aria-label="Execution log">
+  <h3>Execution Log</h3>
+  <ol>
+    {{#each logs}}
+    <li>
+      <span class="ced-result ced-result-{{status}}">{{status}}</span>
+      <strong>{{message}}</strong>
+      <time>{{createdAt}}</time>
+    </li>
+    {{/each}}
+  </ol>
+</section>

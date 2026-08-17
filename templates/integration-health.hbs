@@ -1,0 +1,14 @@
+<section class="ced-health" aria-label="Integration health">
+  <h3>Integration Health</h3>
+  <div class="ced-health-grid">
+    {{#each statuses}}
+    <article class="ced-health-item ced-status-{{statusClass}}">
+      <header>
+        <strong>{{displayName}}</strong>
+        <span>{{status}}</span>
+      </header>
+      <p>{{unsupportedText}}</p>
+    </article>
+    {{/each}}
+  </div>
+</section>

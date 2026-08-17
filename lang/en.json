@@ -1,0 +1,13 @@
+{
+  "CED.ModuleTitle": "Cinematic Encounter Director",
+  "CED.OpenDirector": "Open Cinematic Encounter Director",
+  "CED.Settings.Enabled": "Enable Cinematic Encounter Director",
+  "CED.Settings.ConfirmSceneActivation": "Require confirmation for Scene activation",
+  "CED.Settings.ConfirmCombatDanger": "Require confirmation for combat-ending or turn-changing Actions",
+  "CED.Result.Success": "Success",
+  "CED.Result.Warning": "Warning",
+  "CED.Result.Unsupported": "Unsupported",
+  "CED.Result.Failure": "Failure",
+  "CED.Result.Cancelled": "Cancelled",
+  "CED.Result.RolledBack": "Rolled back"
+}

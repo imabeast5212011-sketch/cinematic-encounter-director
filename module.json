@@ -1,0 +1,51 @@
+{
+  "id": "cinematic-encounter-director",
+  "title": "Cinematic Encounter Director",
+  "description": "A GM-only tactical orchestration layer for manually ordered encounter beats in Foundry VTT v14.",
+  "version": "0.1.0",
+  "type": "module",
+  "authors": [
+    {
+      "name": "Codex"
+    }
+  ],
+  "compatibility": {
+    "minimum": "14",
+    "verified": "14"
+  },
+  "relationships": {
+    "systems": [
+      {
+        "id": "dnd5e",
+        "type": "system",
+        "compatibility": {
+          "minimum": "4"
+        }
+      }
+    ]
+  },
+  "esmodules": [
+    "scripts/main-0.1.0.js"
+  ],
+  "styles": [
+    "styles/director.css"
+  ],
+  "languages": [
+    {
+      "lang": "en",
+      "name": "English",
+      "path": "lang/en.json"
+    }
+  ],
+  "templates": [
+    "templates/director.hbs",
+    "templates/sequence-editor.hbs",
+    "templates/action-editor.hbs",
+    "templates/integration-health.hbs",
+    "templates/execution-log.hbs"
+  ],
+  "readme": "README.md",
+  "url": "https://github.com/imabeast5212011-sketch/cinematic-encounter-director",
+  "manifest": "https://raw.githubusercontent.com/imabeast5212011-sketch/cinematic-encounter-director/main/module.json",
+  "download": "https://raw.githubusercontent.com/imabeast5212011-sketch/cinematic-encounter-director/main/releases/cinematic-encounter-director-0.1.0.zip"
+}

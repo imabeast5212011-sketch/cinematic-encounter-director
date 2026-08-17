@@ -1,0 +1,176 @@
+{{#unless isGM}}
+<div class="ced-empty">
+  <strong>Cinematic Encounter Director</strong>
+  <p>Only a GM may open or run encounter Sequences.</p>
+</div>
+{{else}}
+<div class="ced-shell {{#if compactMode}}is-compact{{/if}}">
+  <header class="ced-toolbar" aria-label="Director controls">
+    <div class="ced-title-block">
+      <h2>Cinematic Encounter Director</h2>
+      <span>{{activeSceneName}}</span>
+    </div>
+    <div class="ced-toolbar-actions">
+      <button type="button" data-action="create-sequence" title="Create Sequence" aria-label="Create Sequence"><i class="fa-solid fa-plus"></i></button>
+      <button type="button" data-action="edit-sequence" title="Edit Sequence" aria-label="Edit Sequence" {{#unless hasSequence}}disabled{{/unless}}><i class="fa-solid fa-pen-to-square"></i></button>
+      <button type="button" data-action="duplicate-sequence" title="Duplicate Sequence" aria-label="Duplicate Sequence" {{#unless hasSequence}}disabled{{/unless}}><i class="fa-solid fa-copy"></i></button>
+      <button type="button" data-action="archive-sequence" title="Archive Sequence" aria-label="Archive Sequence" {{#unless hasSequence}}disabled{{/unless}}><i class="fa-solid fa-box-archive"></i></button>
+      <button type="button" data-action="delete-sequence" class="ced-danger" title="Delete Sequence" aria-label="Delete Sequence" {{#unless hasSequence}}disabled{{/unless}}><i class="fa-solid fa-trash"></i></button>
+      <button type="button" data-action="export-sequence" title="Export Sequence" aria-label="Export Sequence" {{#unless hasSequence}}disabled{{/unless}}><i class="fa-solid fa-file-export"></i></button>
+      <button type="button" data-action="export-scene" title="Export Scene Sequences" aria-label="Export Scene Sequences"><i class="fa-solid fa-folder-tree"></i></button>
+      <button type="button" data-action="open-import" title="Import Sequence JSON" aria-label="Import Sequence JSON"><i class="fa-solid fa-file-import"></i></button>
+      <input type="file" data-field="import-file" accept="application/json,.json" hidden>
+    </div>
+  </header>
+
+  <section class="ced-selector-row" aria-label="Sequence selector">
+    <label>
+      <span>Sequence</span>
+      <select data-field="sequence-select">
+        {{#each sequences}}
+        <option value="{{id}}" {{#if selected}}selected{{/if}}>{{name}}{{#if archived}} (Archived){{/if}}</option>
+        {{/each}}
+      </select>
+    </label>
+    {{#if selectedSequence}}
+    <div class="ced-sequence-summary">
+      <strong>{{selectedSequence.name}}</strong>
+      <span>{{selectedSequence.description}}</span>
+    </div>
+    {{/if}}
+  </section>
+
+  <main class="ced-layout">
+    <aside class="ced-beat-list" aria-label="Ordered Beats">
+      <h3>Beats</h3>
+      {{#if beats.length}}
+      <ol>
+        {{#each beats}}
+        <li>
+          <button type="button" data-action="select-beat" data-beat-id="{{id}}" class="ced-beat-button {{#if selected}}is-selected{{/if}}">
+            <span class="ced-beat-index">{{index}}</span>
+            <span class="ced-beat-name">{{name}}</span>
+            <span class="ced-state">{{manualState}}</span>
+          </button>
+        </li>
+        {{/each}}
+      </ol>
+      {{else}}
+      <p class="ced-muted">No Beats yet.</p>
+      {{/if}}
+    </aside>
+
+    <section class="ced-beat-panel" aria-label="Selected Beat">
+      {{#if selectedBeat}}
+      <header class="ced-beat-header">
+        <div>
+          <h3>{{selectedBeat.name}}</h3>
+          <p>{{selectedBeat.description}}</p>
+        </div>
+        <span class="ced-danger-pill">{{selectedBeat.dangerLevel}}</span>
+      </header>
+      <div class="ced-main-controls">
+        <button type="button" data-action="previous-beat" title="Previous Beat" aria-label="Previous Beat"><i class="fa-solid fa-arrow-left"></i></button>
+        <button type="button" data-action="validate-beat"><i class="fa-solid fa-magnifying-glass"></i> Validate</button>
+        <button type="button" data-action="run-beat" class="ced-primary"><i class="fa-solid fa-play"></i> Run Selected Beat</button>
+        <button type="button" data-action="next-beat" title="Next Beat" aria-label="Next Beat"><i class="fa-solid fa-arrow-right"></i></button>
+        <button type="button" data-action="stop-beat"><i class="fa-solid fa-stop"></i> Stop</button>
+        <button type="button" data-action="emergency-stop" class="ced-danger"><i class="fa-solid fa-triangle-exclamation"></i> Emergency Stop</button>
+        <button type="button" data-action="rollback-last"><i class="fa-solid fa-rotate-left"></i> Roll Back</button>
+        <button type="button" data-action="reset-state"><i class="fa-solid fa-eraser"></i> Reset State</button>
+      </div>
+
+      <div class="ced-actions-list" aria-label="Actions in selected Beat">
+        {{#if actions.length}}
+        {{#each actions}}
+        <article class="ced-action-row">
+          <div class="ced-action-main">
+            <strong>{{name}}</strong>
+            <span>{{type}}</span>
+            {{#unless enabled}}<em>Disabled</em>{{/unless}}
+          </div>
+          <div class="ced-action-status">
+            {{#if lastResult}}
+            <span class="ced-result ced-result-{{lastResult.status}}">{{lastResult.status}}</span>
+            <small>{{lastResult.message}}</small>
+            {{else}}
+            <span class="ced-muted">Not run</span>
+            {{/if}}
+          </div>
+          <div class="ced-row-actions">
+            <button type="button" data-action="run-action" data-action-id="{{id}}" title="Run Action" aria-label="Run Action"><i class="fa-solid fa-play"></i></button>
+            <button type="button" data-action="retry-action" data-action-id="{{id}}" title="Retry Action" aria-label="Retry Action"><i class="fa-solid fa-repeat"></i></button>
+            <button type="button" data-action="skip-action" data-action-id="{{id}}" title="Skip Action" aria-label="Skip Action"><i class="fa-solid fa-forward-step"></i></button>
+          </div>
+        </article>
+        {{/each}}
+        {{else}}
+        <p class="ced-muted">No Actions yet.</p>
+        {{/if}}
+      </div>
+      {{else}}
+      <div class="ced-empty">
+        <strong>No Beat selected</strong>
+        <p>Create or edit a Sequence to add Beats.</p>
+      </div>
+      {{/if}}
+    </section>
+  </main>
+
+  {{#if preview}}
+  <section class="ced-preview" aria-label="Dry run preview">
+    <h3>Dry Run</h3>
+    <p>{{preview.message}}</p>
+    <ol>
+      {{#each preview.executionOrder}}
+      <li>{{name}} <span>{{type}}</span></li>
+      {{/each}}
+    </ol>
+  </section>
+  {{/if}}
+
+  {{#if showIntegrationHealth}}
+  <section class="ced-health" aria-label="Integration health">
+    <h3>Integration Health</h3>
+    <div class="ced-health-grid">
+      {{#each statuses}}
+      <article class="ced-health-item ced-status-{{statusClass}}">
+        <header>
+          <strong>{{displayName}}</strong>
+          <span>{{status}}</span>
+        </header>
+        <dl>
+          <dt>ID</dt><dd>{{moduleId}}</dd>
+          <dt>Version</dt><dd>{{version}}</dd>
+          <dt>API</dt><dd>{{#if apiDetected}}Detected{{else}}Not detected{{/if}}</dd>
+          <dt>Capabilities</dt><dd>{{capabilitiesText}}</dd>
+        </dl>
+        {{#if unsupportedText}}<p>{{unsupportedText}}</p>{{/if}}
+        {{#if lastError}}<p class="ced-error-text">{{lastError}}</p>{{/if}}
+      </article>
+      {{/each}}
+    </div>
+  </section>
+  {{/if}}
+
+  <section class="ced-log" aria-label="Execution log">
+    <header>
+      <h3>Execution Log</h3>
+      <button type="button" data-action="clear-log" title="Clear Log" aria-label="Clear Log"><i class="fa-solid fa-broom"></i></button>
+    </header>
+    {{#if logs.length}}
+    <ol>
+      {{#each logs}}
+      <li>
+        <span class="ced-result ced-result-{{status}}">{{status}}</span>
+        <strong>{{message}}</strong>
+        <time>{{createdAt}}</time>
+      </li>
+      {{/each}}
+    </ol>
+    {{else}}
+    <p class="ced-muted">No execution entries yet.</p>
+    {{/if}}
+  </section>
+</div>
+{{/unless}}

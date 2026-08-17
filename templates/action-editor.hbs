@@ -1,0 +1,138 @@
+{{#unless isGM}}
+<div class="ced-empty"><strong>GM access required.</strong></div>
+{{else}}
+<form data-form="action" class="ced-action-form">
+  <header>
+    <h2>{{action.name}}</h2>
+    <div>
+      <button type="button" data-action="validate-action"><i class="fa-solid fa-magnifying-glass"></i> Validate</button>
+      <button type="button" data-action="reset-default-config"><i class="fa-solid fa-rotate"></i> Defaults</button>
+      <button type="button" data-action="save-action" class="ced-primary"><i class="fa-solid fa-floppy-disk"></i> Save Action</button>
+    </div>
+  </header>
+
+  <div class="ced-grid-two">
+    <label>
+      <span>Name</span>
+      <input type="text" name="name" value="{{action.name}}" maxlength="120">
+    </label>
+    <label>
+      <span>Type</span>
+      <select name="type">
+        {{#each actionTypes}}
+        <option value="{{id}}" {{#if selected}}selected{{/if}}>{{label}} - {{providerStatus}}</option>
+        {{/each}}
+      </select>
+    </label>
+  </div>
+
+  <div class="ced-grid-two">
+    <label>
+      <span>Failure Policy</span>
+      <select name="failurePolicy">
+        {{#each failurePolicies}}
+        <option value="{{value}}" {{#if selected}}selected{{/if}}>{{value}}</option>
+        {{/each}}
+      </select>
+    </label>
+    <label>
+      <span>Execution Mode</span>
+      <select name="executionMode">
+        {{#each executionModes}}
+        <option value="{{value}}" {{#if selected}}selected{{/if}}>{{value}}</option>
+        {{/each}}
+      </select>
+    </label>
+  </div>
+
+  <div class="ced-grid-two">
+    <label>
+      <span>Parallel Group</span>
+      <input type="text" name="parallelGroup" value="{{action.parallelGroup}}">
+    </label>
+    <label>
+      <span>Delay After (ms)</span>
+      <input type="number" name="delayAfterMs" min="0" max="60000" step="100" value="{{action.delayAfterMs}}">
+    </label>
+  </div>
+
+  <div class="ced-check-row">
+    <label><input type="checkbox" name="enabled" {{#if action.enabled}}checked{{/if}}> Enabled</label>
+    <label><input type="checkbox" name="requiresConfirmation" {{#if action.requiresConfirmation}}checked{{/if}}> Confirm before execution</label>
+  </div>
+
+  <section class="ced-reference-tools" aria-label="Reference selectors">
+    <header>
+      <h3>References</h3>
+    </header>
+    <div class="ced-grid-two">
+      <label>
+        <span>Scene</span>
+        <select data-field="picker-scene">
+          {{#each scenes}}
+          <option value="{{uuid}}">{{name}}</option>
+          {{/each}}
+        </select>
+      </label>
+      <div class="ced-reference-actions">
+        <button type="button" data-action="apply-scene"><i class="fa-solid fa-location-dot"></i> Use Scene</button>
+        <button type="button" data-action="apply-controlled-tokens"><i class="fa-solid fa-user-group"></i> Use Controlled Tokens</button>
+      </div>
+    </div>
+    <div class="ced-grid-two">
+      <div class="ced-reference-actions">
+        <button type="button" data-action="apply-controlled-lights"><i class="fa-solid fa-lightbulb"></i> Use Controlled Lights</button>
+        <button type="button" data-action="apply-controlled-walls"><i class="fa-solid fa-door-open"></i> Use Controlled Walls</button>
+      </div>
+      <label>
+        <span>Users</span>
+        <select data-field="picker-users" multiple size="4">
+          {{#each users}}
+          <option value="{{id}}">{{name}}{{#if isGM}} (GM){{/if}}</option>
+          {{/each}}
+        </select>
+      </label>
+    </div>
+    <div class="ced-grid-two">
+      <label>
+        <span>Playlist</span>
+        <select data-field="picker-playlist">
+          {{#each playlists}}
+          <option value="{{uuid}}">{{name}}</option>
+          {{/each}}
+        </select>
+      </label>
+      <div class="ced-reference-actions">
+        <button type="button" data-action="apply-users"><i class="fa-solid fa-users"></i> Use Users</button>
+        <button type="button" data-action="apply-playlist"><i class="fa-solid fa-music"></i> Use Playlist</button>
+      </div>
+    </div>
+  </section>
+
+  <label>
+    <span>Declarative Config JSON</span>
+    <textarea name="configJson" rows="12" spellcheck="false">{{configJson}}</textarea>
+  </label>
+
+  <label>
+    <span>Precondition JSON</span>
+    <textarea name="preconditionJson" rows="5" spellcheck="false">{{preconditionJson}}</textarea>
+  </label>
+
+  {{#if action.lastValidation}}
+  <section class="ced-editor-status">
+    <strong>Last Validation</strong>
+    <span class="ced-result ced-result-{{action.lastValidation.status}}">{{action.lastValidation.status}}</span>
+    <p>{{action.lastValidation.message}}</p>
+  </section>
+  {{/if}}
+
+  {{#if action.lastResult}}
+  <section class="ced-editor-status">
+    <strong>Last Result</strong>
+    <span class="ced-result ced-result-{{action.lastResult.status}}">{{action.lastResult.status}}</span>
+    <p>{{action.lastResult.message}}</p>
+  </section>
+  {{/if}}
+</form>
+{{/unless}}
