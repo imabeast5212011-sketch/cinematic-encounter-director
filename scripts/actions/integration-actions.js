@@ -5,25 +5,25 @@ export const INTEGRATION_ACTION_TYPES = Object.freeze([
     id: "sessionflow.trigger",
     provider: PROVIDERS.SESSIONFLOW,
     label: "Trigger SessionFlow content",
-    description: "Requires a confirmed SessionFlow public API exposed for Encounter Director.",
+    description: "Calls confirmed SessionFlow hooks or presentation socket actions.",
     dangerLevel: DANGER_LEVELS.SAFE,
-    defaultConfig: { method: "", externalId: "", operation: "trigger", callStyle: "object" }
+    defaultConfig: { operation: "callHook", hookName: "sessionflow:togglePanel", args: [] }
   },
   {
     id: "sessionflow.open",
     provider: PROVIDERS.SESSIONFLOW,
     label: "Open SessionFlow content for GM",
-    description: "Requires a confirmed local GM-facing SessionFlow public API.",
+    description: "Opens or navigates the GM-facing SessionFlow workspace through confirmed hooks.",
     dangerLevel: DANGER_LEVELS.SAFE,
-    defaultConfig: { method: "", externalId: "", operation: "open", callStyle: "object" }
+    defaultConfig: { operation: "togglePanel", sessionId: "", beatId: "", sceneId: "" }
   },
   {
     id: "exalted-scenes.broadcast",
     provider: PROVIDERS.EXALTED_SCENES,
     label: "Broadcast Exalted Scenes presentation",
-    description: "References existing Exalted Scenes content through a confirmed public API.",
+    description: "Broadcasts scenes or starts Exalted slideshows/sequences through the confirmed public API.",
     dangerLevel: DANGER_LEVELS.SAFE,
-    defaultConfig: { method: "", externalId: "", operation: "broadcast", callStyle: "object" }
+    defaultConfig: { externalId: "", sceneId: "", operation: "broadcast", options: {} }
   },
   {
     id: "exalted-scenes.stop",
@@ -31,7 +31,7 @@ export const INTEGRATION_ACTION_TYPES = Object.freeze([
     label: "Stop Exalted Scenes presentation",
     description: "Stops or clears a Director-triggered presentation where the public API supports it.",
     dangerLevel: DANGER_LEVELS.SAFE,
-    defaultConfig: { method: "", externalId: "", operation: "stop", callStyle: "object" }
+    defaultConfig: { externalId: "", operation: "stop" }
   },
   {
     id: "narrators-jukebox.playMusic",
@@ -39,7 +39,7 @@ export const INTEGRATION_ACTION_TYPES = Object.freeze([
     label: "Play Narrator's Jukebox music",
     description: "Plays an existing Jukebox entry through a confirmed public API.",
     dangerLevel: DANGER_LEVELS.SAFE,
-    defaultConfig: { method: "", externalId: "", operation: "playMusic", callStyle: "object" }
+    defaultConfig: { externalId: "", trackId: "", trackName: "", playlistId: "", playlistName: "", tag: "", operation: "playMusic", channel: "music" }
   },
   {
     id: "narrators-jukebox.stopMusic",
@@ -47,7 +47,7 @@ export const INTEGRATION_ACTION_TYPES = Object.freeze([
     label: "Stop Narrator's Jukebox music",
     description: "Stops Director-started music where the public API supports it.",
     dangerLevel: DANGER_LEVELS.SAFE,
-    defaultConfig: { method: "", externalId: "", operation: "stopMusic", callStyle: "object" }
+    defaultConfig: { operation: "stopMusic", channel: "music", stopAll: false }
   },
   {
     id: "narrators-jukebox.ambience",
@@ -55,7 +55,7 @@ export const INTEGRATION_ACTION_TYPES = Object.freeze([
     label: "Start or stop Narrator's Jukebox ambience",
     description: "Starts or stops an existing ambience preset or layer through a confirmed public API.",
     dangerLevel: DANGER_LEVELS.SAFE,
-    defaultConfig: { method: "", externalId: "", operation: "startAmbience", callStyle: "object" }
+    defaultConfig: { externalId: "", ambienceTrackId: "", presetId: "", operation: "startAmbience", mode: "layer", volume: 1, stopAll: false }
   },
   {
     id: "narrators-jukebox.soundCue",
@@ -63,7 +63,7 @@ export const INTEGRATION_ACTION_TYPES = Object.freeze([
     label: "Play Narrator's Jukebox soundboard cue",
     description: "Plays an existing soundboard cue through a confirmed public API.",
     dangerLevel: DANGER_LEVELS.SAFE,
-    defaultConfig: { method: "", externalId: "", operation: "playSoundCue", callStyle: "object" }
+    defaultConfig: { externalId: "", soundId: "", soundName: "", operation: "playSoundCue", options: {} }
   },
   {
     id: "fxmaster.preset",
