@@ -3,6 +3,7 @@ import { defaultIntegrationActionPatch } from "./actions/integration-actions.js"
 import { defaultActionPatch } from "./actions/native-actions.js";
 import { ActionEditor } from "./action-editor.js";
 import { createResult, safeBoolean } from "./state/schema.js";
+import { keepApplicationWindowScrollable, releaseApplicationWindowScrollable } from "./ui-window.js";
 
 const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api;
 
@@ -96,6 +97,7 @@ export class SequenceEditor extends HandlebarsApplicationMixin(ApplicationV2) {
 
   _onRender(context, options) {
     super._onRender(context, options);
+    keepApplicationWindowScrollable(this, { minWidth: 420, minHeight: 360 });
     const element = appElement(this);
     if (!element) return;
     element.querySelectorAll("[data-action]").forEach((control) => {
@@ -321,6 +323,7 @@ export class SequenceEditor extends HandlebarsApplicationMixin(ApplicationV2) {
   }
 
   async close(options) {
+    releaseApplicationWindowScrollable(this);
     await super.close(options);
     this.onCloseCallback?.();
   }

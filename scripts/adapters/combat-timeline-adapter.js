@@ -32,7 +32,7 @@ export class CombatTimelineAdapter extends BaseAdapter {
   statusFromDetection(module, api, bridge, capabilities) {
     if (!module.active) return "Inactive";
     if (!api) return "API not detected";
-    if (capabilities.includes("openCountdownConfig")) return bridge ? "Ready" : "Limited";
+    if (capabilities.includes("openCountdownConfig")) return bridge ? "Ready" : "Config only";
     return super.statusFromDetection(module, api, bridge, capabilities);
   }
 

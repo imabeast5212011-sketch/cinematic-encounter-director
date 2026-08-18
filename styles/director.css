@@ -13,6 +13,15 @@
   min-height: 0;
 }
 
+.cinematic-encounter-director,
+.ced-director,
+.ced-sequence-editor,
+.ced-action-editor {
+  max-width: calc(100vw - 8px) !important;
+  max-height: calc(100vh - 8px) !important;
+  overflow: hidden !important;
+}
+
 .cinematic-encounter-director * {
   box-sizing: border-box;
   letter-spacing: 0;
@@ -20,12 +29,26 @@
 
 .cinematic-encounter-director .window-content,
 .cinematic-encounter-director .application-content,
-.cinematic-encounter-director [data-application-part] {
+.cinematic-encounter-director [data-application-part],
+.ced-director .window-content,
+.ced-director .application-content,
+.ced-sequence-editor .window-content,
+.ced-sequence-editor .application-content,
+.ced-action-editor .window-content,
+.ced-action-editor .application-content {
   min-height: 0;
 }
 
 .cinematic-encounter-director .window-content,
-.cinematic-encounter-director .application-content {
+.cinematic-encounter-director .application-content,
+.ced-director .window-content,
+.ced-director .application-content,
+.ced-sequence-editor .window-content,
+.ced-sequence-editor .application-content,
+.ced-action-editor .window-content,
+.ced-action-editor .application-content {
+  display: flex;
+  flex-direction: column;
   overflow-x: hidden !important;
   overflow-y: auto !important;
 }
@@ -88,9 +111,10 @@
   gap: 10px;
   flex: 1 1 auto;
   min-height: 0;
-  max-height: calc(100vh - 56px);
-  overflow-x: hidden;
-  overflow-y: auto;
+  max-width: 100%;
+  max-height: min(100%, calc(100vh - 48px));
+  overflow-x: hidden !important;
+  overflow-y: auto !important;
   background: var(--ced-bg);
   padding: 10px;
   scrollbar-gutter: stable;
@@ -380,7 +404,7 @@
   grid-template-areas: "sequence beats right";
   align-items: start;
   height: 100%;
-  max-height: calc(100vh - 56px);
+  max-height: min(100%, calc(100vh - 48px));
 }
 
 .ced-sequence-panel {
@@ -504,7 +528,7 @@
       "sequence beats"
       "right right";
     height: 100%;
-    max-height: calc(100vh - 56px);
+    max-height: min(100%, calc(100vh - 48px));
     overflow-x: hidden;
     overflow-y: auto;
   }

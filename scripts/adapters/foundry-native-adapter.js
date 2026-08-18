@@ -242,7 +242,7 @@ export class FoundryNativeAdapter {
       active: true,
       version: game.version ?? "",
       apiDetected: true,
-      status: game.user?.isGM ? "Ready" : "Limited",
+      status: game.user?.isGM ? "Ready" : "GM only",
       capabilities: [
         "scenes",
         "tokens",

@@ -2,6 +2,7 @@ import { MODULE_ID, MODULE_TITLE, RESULT_STATUS, SETTINGS, TEMPLATE_PATHS } from
 import { getSetting } from "./settings.js";
 import { createResult } from "./state/schema.js";
 import { SequenceEditor } from "./sequence-editor.js";
+import { keepApplicationWindowScrollable, releaseApplicationWindowScrollable } from "./ui-window.js";
 
 const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api;
 
@@ -110,6 +111,7 @@ export class DirectorApplication extends HandlebarsApplicationMixin(ApplicationV
 
   _onRender(context, options) {
     super._onRender(context, options);
+    keepApplicationWindowScrollable(this, { minWidth: 420, minHeight: 360 });
     const element = appElement(this);
     if (!element) return;
     element.querySelector("[data-field='sequence-select']")?.addEventListener("change", (event) => {
@@ -338,5 +340,10 @@ export class DirectorApplication extends HandlebarsApplicationMixin(ApplicationV
     }
     notify(createResult(RESULT_STATUS.SUCCESS, "Execution state reset."));
     this.render({ force: true });
+  }
+
+  async close(options) {
+    releaseApplicationWindowScrollable(this);
+    await super.close(options);
   }
 }

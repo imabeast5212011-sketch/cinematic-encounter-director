@@ -131,9 +131,9 @@ export class BaseAdapter {
   statusFromDetection(module, api, bridge, capabilities) {
     if (!module.active) return "Inactive";
     if (!api) return "API not detected";
-    if (!bridge && !capabilities.length) return "Limited";
+    if (!bridge && !capabilities.length) return "Detected only";
     if (capabilities.length) return "Ready";
-    return "Limited";
+    return "Detected only";
   }
 
   async getBridgeCapabilities(bridge) {
