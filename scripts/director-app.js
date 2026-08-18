@@ -84,6 +84,7 @@ export class DirectorApplication extends HandlebarsApplicationMixin(ApplicationV
       ...status,
       statusClass: statusClass(status.status),
       capabilitiesText: status.capabilities?.join(", ") || "None",
+      apiSourceText: status.apiSource || "",
       apiMethodsText: status.apiMethods?.join(", ") || "",
       unsupportedText: status.unsupported?.join(" ") || ""
     }));

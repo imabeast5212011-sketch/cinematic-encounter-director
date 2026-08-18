@@ -6,20 +6,25 @@ function normalizeText(value) {
   return String(value ?? "").toLocaleLowerCase().replace(/[^a-z0-9]+/g, " ").trim();
 }
 
+function isApiLike(value) {
+  return value && (typeof value === "object" || typeof value === "function");
+}
+
 function publicKeyNames(object) {
   try {
-    if (!object || typeof object !== "object") return [];
-    const own = Object.keys(object);
+    if (!isApiLike(object)) return [];
+    const own = Object.getOwnPropertyNames(object);
     const proto = Object.getPrototypeOf(object);
-    const protoKeys = proto && proto !== Object.prototype ? Object.getOwnPropertyNames(proto) : [];
-    return [...new Set([...own, ...protoKeys])].filter((key) => key !== "constructor");
+    const protoKeys = proto && proto !== Object.prototype && proto !== Function.prototype ? Object.getOwnPropertyNames(proto) : [];
+    return [...new Set([...own, ...protoKeys])].filter((key) => !["arguments", "caller", "constructor", "length", "name", "prototype"].includes(key));
   } catch (_error) {
     return [];
   }
 }
 
-export function listPublicApiMethods(api, prefix = "", depth = 0) {
-  if (!api || typeof api !== "object" || depth > 1) return [];
+export function listPublicApiMethods(api, prefix = "", depth = 0, seen = new WeakSet()) {
+  if (!isApiLike(api) || depth > 3 || seen.has(api)) return [];
+  seen.add(api);
   const methods = [];
   for (const key of publicKeyNames(api)) {
     if (!key || key.startsWith("_")) continue;
@@ -31,8 +36,8 @@ export function listPublicApiMethods(api, prefix = "", depth = 0) {
     }
     const name = `${prefix}${key}`;
     if (typeof value === "function") methods.push(name);
-    else if (value && typeof value === "object" && !Array.isArray(value)) {
-      methods.push(...listPublicApiMethods(value, `${name}.`, depth + 1));
+    else if (isApiLike(value) && !Array.isArray(value)) {
+      methods.push(...listPublicApiMethods(value, `${name}.`, depth + 1, seen));
     }
   }
   return [...new Set(methods)].slice(0, 80);
@@ -40,6 +45,9 @@ export function listPublicApiMethods(api, prefix = "", depth = 0) {
 
 export function findPublicApiMethod(api, candidates = []) {
   for (const candidate of candidates.map((entry) => String(entry ?? "").trim()).filter(Boolean)) {
+    if (typeof api === "function" && ["$call", "call", "default"].includes(candidate)) {
+      return { name: "$call", owner: null, fn: api };
+    }
     const path = candidate.split(".");
     let owner = api;
     for (const segment of path.slice(0, -1)) {
@@ -62,6 +70,7 @@ export class BaseAdapter {
     this.titleMatchers = titleMatchers.map(normalizeText);
     this.lastError = "";
     this._status = null;
+    this._lastApiSource = "";
   }
 
   get enabledBySetting() {
@@ -87,10 +96,31 @@ export class BaseAdapter {
     }) ?? null;
   }
 
+  getAdditionalPublicApiCandidates(_module) {
+    return [];
+  }
+
+  getPublicApiCandidates(module) {
+    const candidates = [];
+    const add = (api, source) => {
+      if (!isApiLike(api)) return;
+      if (candidates.some((candidate) => candidate.api === api)) return;
+      candidates.push({ api, source });
+    };
+
+    add(module?.api, `${module?.id ?? this.providerId}.api`);
+    for (const candidate of this.getAdditionalPublicApiCandidates(module)) {
+      if (Array.isArray(candidate)) add(candidate[1], candidate[0]);
+      else add(candidate?.api, candidate?.source);
+    }
+    return candidates;
+  }
+
   getPublicApi(module) {
-    const api = module?.api;
-    if (!api || typeof api !== "object") return null;
-    return api;
+    const candidates = this.getPublicApiCandidates(module);
+    const preferred = candidates.find((candidate) => listPublicApiMethods(candidate.api).length) ?? candidates[0] ?? null;
+    this._lastApiSource = preferred?.source ?? "";
+    return preferred?.api ?? null;
   }
 
   getDirectorBridge(api) {
@@ -151,6 +181,7 @@ export class BaseAdapter {
         active: Boolean(module.active),
         version: safeString(module.version ?? module.versionId ?? "", 80),
         apiDetected,
+        apiSource: this._lastApiSource,
         status,
         capabilities,
         apiMethods,

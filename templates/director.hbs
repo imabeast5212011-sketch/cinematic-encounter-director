@@ -143,6 +143,7 @@
           <dt>ID</dt><dd>{{moduleId}}</dd>
           <dt>Version</dt><dd>{{version}}</dd>
           <dt>API</dt><dd>{{#if apiDetected}}Detected{{else}}Not detected{{/if}}</dd>
+          {{#if apiSourceText}}<dt>API Source</dt><dd>{{apiSourceText}}</dd>{{/if}}
           <dt>Capabilities</dt><dd>{{capabilitiesText}}</dd>
           {{#if apiMethodsText}}<dt>Public API</dt><dd>{{apiMethodsText}}</dd>{{/if}}
         </dl>

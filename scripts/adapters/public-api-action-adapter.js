@@ -24,6 +24,32 @@ function normalizeOperation(config = {}) {
   return String(config.operation ?? "").trim();
 }
 
+function tokenize(value) {
+  return String(value ?? "")
+    .replace(/([a-z0-9])([A-Z])/g, "$1 $2")
+    .toLocaleLowerCase()
+    .split(/[^a-z0-9]+/g)
+    .filter(Boolean);
+}
+
+function actionOperationTokens(action) {
+  const operation = normalizeOperation(action.config ?? {}) || String(action.type ?? "").split(".").at(-1) || "";
+  const tokens = tokenize(operation);
+  if (operation === "playMusic") return ["play", "music"];
+  if (operation === "stopMusic") return ["stop", "music"];
+  if (operation === "startAmbience") return ["start", "ambience"];
+  if (operation === "stopAmbience") return ["stop", "ambience"];
+  if (operation === "playSoundCue") return ["play", "sound"];
+  return tokens;
+}
+
+function methodMatchesTokens(methodName, tokens) {
+  if (!tokens.length) return false;
+  const methodTokens = tokenize(methodName);
+  const joined = methodTokens.join(" ");
+  return tokens.every((token) => methodTokens.includes(token) || joined.includes(token));
+}
+
 function publicMethodNames(api) {
   return listPublicApiMethods(api);
 }
@@ -68,7 +94,12 @@ export class PublicApiActionAdapter extends BaseAdapter {
   }
 
   resolveMethod(api, action) {
-    return findPublicApiMethod(api, this.getActionMethodCandidates(action));
+    const configured = findPublicApiMethod(api, this.getActionMethodCandidates(action));
+    if (configured) return configured;
+
+    const tokens = actionOperationTokens(action);
+    const inferred = publicMethodNames(api).filter((methodName) => methodMatchesTokens(methodName, tokens));
+    return findPublicApiMethod(api, inferred);
   }
 
   buildPayload(action, context = {}) {
