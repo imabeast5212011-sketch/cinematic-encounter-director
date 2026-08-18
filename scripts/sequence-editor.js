@@ -11,6 +11,15 @@ function appElement(app) {
   return app.element instanceof HTMLElement ? app.element : app.element?.[0] ?? null;
 }
 
+function applyEditorLayoutMode(element) {
+  const layout = element?.querySelector?.(".ced-editor-layout");
+  if (!layout) return;
+  const width = layout.getBoundingClientRect?.().width || layout.clientWidth || 0;
+  const useGrid = width >= 480;
+  layout.classList.toggle("is-stack", !useGrid);
+  layout.classList.toggle("is-compact-grid", useGrid);
+}
+
 function orderedBeats(sequence) {
   const byId = new Map((sequence?.beats ?? []).map((beat) => [beat.id, beat]));
   const ordered = (sequence?.beatIds ?? []).map((id) => byId.get(id)).filter(Boolean);
@@ -67,6 +76,7 @@ export class SequenceEditor extends HandlebarsApplicationMixin(ApplicationV2) {
     this.selectedSequenceId = options.selectedSequenceId ?? "";
     this.selectedBeatId = options.selectedBeatId ?? "";
     this.onCloseCallback = options.onClose;
+    this._cedLayoutObserver = null;
   }
 
   async _prepareContext(options) {
@@ -101,6 +111,14 @@ export class SequenceEditor extends HandlebarsApplicationMixin(ApplicationV2) {
     keepApplicationWindowScrollable(this, { minWidth: 760, minHeight: 420, fillWidth: true, fillHeight: true });
     const element = appElement(this);
     if (!element) return;
+    this._cedLayoutObserver?.disconnect();
+    applyEditorLayoutMode(element);
+    globalThis.requestAnimationFrame?.(() => applyEditorLayoutMode(element));
+    const layout = element.querySelector(".ced-editor-layout");
+    if (layout && globalThis.ResizeObserver) {
+      this._cedLayoutObserver = new ResizeObserver(() => applyEditorLayoutMode(element));
+      this._cedLayoutObserver.observe(layout);
+    }
     element.querySelectorAll("[data-action]").forEach((control) => {
       control.addEventListener("click", (event) => {
         event.preventDefault();
@@ -324,6 +342,8 @@ export class SequenceEditor extends HandlebarsApplicationMixin(ApplicationV2) {
   }
 
   async close(options) {
+    this._cedLayoutObserver?.disconnect();
+    this._cedLayoutObserver = null;
     releaseApplicationWindowScrollable(this);
     await super.close(options);
     this.onCloseCallback?.();
