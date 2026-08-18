@@ -1,214 +1,313 @@
-# Cinematic Encounter Director: How To For Dummies
+# Cinematic Encounter Director: Simple GM Guide
 
-This is the simple version. You are the GM. You want to prep an encounter, press buttons during play, and maybe let a few things advance automatically.
+This guide is for using Cinematic Encounter Director at the table without needing to understand the code.
 
-## The Basic Idea
+The short version:
 
-Think of the module like this:
+- Build the encounter before the session.
+- Validate before you run anything.
+- During play, use the Director like a cue list.
+- Let Triggers select the next Beat first; only make them auto-run after you trust them.
 
-- Sequence: the whole encounter.
-- Beat: one phase of the encounter.
-- Action: one thing that happens during that phase.
-- Trigger: a rule that notices something in combat and jumps to or runs a Beat.
+## What The Words Mean
 
-Example:
+Sequence:
 
-- Sequence: Bandit ambush.
-- Beat 1: Start the fight.
-- Beat 2: Reinforcements arrive.
-- Beat 3: Boss monologue.
-- Trigger: when 2 enemies are defeated, jump to Beat 2.
+The whole encounter plan.
 
-## Install Or Update
+Example: `Goblin Ambush`
 
-1. Put the module folder in Foundry's `Data/modules/` folder.
-2. Restart Foundry if it does not notice the new version.
-3. Enable **Cinematic Encounter Director** in Manage Modules.
-4. Do a full browser reload after updating.
-5. Confirm the Director title shows the expected version.
+Beat:
 
-For v0.1.17, the manifest should load:
+One phase, reveal, wave, turn, cutaway, or important moment inside the encounter.
+
+Example: `Beat 1: Start combat`, `Beat 2: Reinforcements`, `Beat 3: Boss flees`
+
+Action:
+
+One thing the module does when a Beat runs.
+
+Example: reveal Tokens, start Combat, play music, show a HUD card, wait for GM confirmation.
+
+Trigger:
+
+A rule that watches the fight and moves to, runs, or starts a Beat when something happens.
+
+Example: when 2 enemies are defeated, select the reinforcement Beat.
+
+## The Safest Workflow
+
+Use this order almost every time:
+
+1. Prepare the Scene.
+2. Create a Sequence.
+3. Add Beats.
+4. Add Actions to each Beat.
+5. Add Triggers only where useful.
+6. Validate every Beat.
+7. Run the encounter from the Director.
+
+Do not start with automation. Get the manual version working first, then add Triggers.
+
+## First-Time Setup
+
+1. Install or update the module in Foundry.
+2. Enable **Cinematic Encounter Director** in Manage Modules.
+3. Reload the browser after updating.
+4. Open your world as a GM.
+5. Open the Scene you want to run.
+
+For v0.1.17, the module should load this runtime:
 
 ```text
 scripts/runtime-0.1.17/main.js
 ```
 
+If Foundry still shows an older version, reload the browser fully.
+
 ## Open The Director
 
-As GM:
+As GM, use the Director button in the Scene controls.
 
-1. Open your Scene.
-2. Use the Director button in Scene controls.
-3. Or run this in the browser console:
+You can also run this in the browser console:
 
 ```js
 game.modules.get("cinematic-encounter-director").api.openDirector()
 ```
 
-## Make Your First Combat
+The main Director window is for running the encounter.
 
-1. Put the enemy Tokens on the Scene.
-2. Hide them if they should start hidden.
-3. Select the enemy Tokens on the canvas.
-4. Open the Director.
-5. Click the plus button to create a Sequence.
-6. Open the Sequence editor.
-7. Click **Bind Current Scene**.
-8. Rename the Sequence.
-9. Select Beat 1.
-10. Click **Add Combat Setup From Selected Tokens**.
-11. Click **Save Beat**.
-12. Close the editor.
-13. In the Director, click **Validate**.
-14. If validation looks okay, click **Run Selected Beat**.
+The Sequence editor is for building or changing the encounter.
 
-That gives you a working first Beat that can activate the Scene, reveal Tokens, create Combat, add Tokens, and start Combat.
+## Build A Basic Combat
 
-## Add Reinforcements
+This is the best first thing to test.
 
-1. Put reinforcement Tokens on the Scene.
+1. Open the battle Scene.
+2. Place the enemy Tokens.
+3. Hide the enemy Tokens if they should not be visible yet.
+4. Select the enemy Tokens on the canvas.
+5. Open the Director.
+6. Click the plus button to create a Sequence.
+7. Open the Sequence editor.
+8. Click **Bind Current Scene**.
+9. Rename the Sequence.
+10. Select Beat 1.
+11. Click **Add Combat Setup From Selected Tokens**.
+12. Click **Save Beat**.
+13. Close the editor.
+14. Click **Validate** in the Director.
+15. If validation is okay, click **Run Selected Beat**.
+
+That shortcut can create Actions for:
+
+- Activating or binding the Scene.
+- Revealing selected Tokens.
+- Creating Combat.
+- Adding selected Tokens to Combat.
+- Starting Combat.
+
+## Add A Reinforcement Beat
+
+Use this when enemies or allies enter later.
+
+1. Put the reinforcement Tokens on the Scene.
 2. Hide them.
-3. Select those reinforcement Tokens.
+3. Select those Tokens.
 4. Open the Sequence editor.
 5. Add a new Beat.
-6. Click **Add Reinforcement Wave**.
-7. Save the Beat.
+6. Name it something clear, like `Wave 2 Reinforcements`.
+7. Click **Add Reinforcement Wave**.
+8. Click **Save Beat**.
+9. Validate the Beat from the Director.
 
-During the session, run that Beat when you want the wave to appear.
+When you run this Beat, it can reveal those Tokens and add them to the current Combat.
 
 ## Add A Normal Action
 
 1. Open the Sequence editor.
-2. Pick the Beat.
-3. In the Actions section, choose an Action type from the dropdown.
+2. Select the Beat.
+3. In the Actions section, pick an Action type.
 4. Click **Add Action**.
-5. Fill out the Action editor.
-6. Save it.
-7. Validate the Beat before using it live.
+5. Fill in the Action editor.
+6. Save.
+7. Validate the Beat.
 
-## Use The Director During Play
+Keep Action names plain and table-facing.
 
-The main Director window is for the session.
+Good names:
 
-Common buttons:
+- `Reveal rooftop archers`
+- `Start phase two music`
+- `Wait for villain speech`
+- `Set darkness to 80%`
 
-- Left arrow: previous Beat.
-- Right arrow: next Beat.
+Bad names:
+
+- `Action 4`
+- `native.setTokenVisibility`
+- `Stuff happens`
+
+## Recommended Beat Structure
+
+A clean encounter might look like this:
+
+1. `Setup and start combat`
+2. `First enemy drop`
+3. `Reinforcements arrive`
+4. `Boss bloodied`
+5. `Escape or surrender`
+6. `Cleanup`
+
+Each Beat should be something you can understand at a glance while players are talking.
+
+## Running The Encounter
+
+Use the main Director window during play.
+
+Common controls:
+
+- Previous Beat: move selection backward.
+- Next Beat: move selection forward.
 - Validate: check the selected Beat.
-- Run Selected Beat: execute the whole selected Beat.
-- Stop: stop the currently running Beat on your client.
-- Emergency Stop: cancel Director timers and notify supported integrations.
+- Run Selected Beat: execute the selected Beat.
+- Stop: stop the running Beat on your client.
+- Emergency Stop: cancel active Director timers and supported Director-owned output.
 - Roll Back: undo the last supported Action if rollback exists.
 - Reset State: clear stored Action results and Trigger fire-state for this Sequence.
 
-## Add A Trigger
+Important: Next and Previous only change the selected Beat. They do not run it.
 
-Important trick: add the Trigger to the Beat you want to happen next.
+## Validate Before Running
 
-Example: You want Beat 2 to become active after two enemies die.
+Use **Validate** before you run a Beat.
 
-1. Open the Sequence editor.
-2. Select Beat 2.
-3. Click **Add Enemy Count Trigger**.
-4. In **Triggers JSON**, change `"count": 1` to `"count": 2`.
-5. Click **Save Beat**.
+Validation helps catch:
 
-Now, when two hostile combatants are defeated, the Director selects Beat 2.
+- Missing Tokens.
+- Missing Scenes.
+- Unsupported integrations.
+- Disabled integrations.
+- Risky combat changes.
+- Bad references.
 
-## Make A Trigger Run The Beat
+If validation warns you, read it before running.
 
-By default, Triggers only jump/select the Beat.
+## What Rollback Does
 
-To make it actually run the Beat, edit the Trigger JSON:
+Rollback can undo some things, but not everything.
+
+Rollback can help with:
+
+- Token hidden state.
+- Token position.
+- Token elevation.
+- Token disposition.
+- Scene darkness.
+- Some Scene environment fields.
+- Some light, wall, and door changes.
+- Combatants added by the Director.
+
+Rollback does not promise to undo:
+
+- Scene activation.
+- Chat messages.
+- Combat start/end.
+- Combat round/turn changes.
+- Pause state.
+- External module effects without a confirmed rollback API.
+
+Treat rollback as a safety net, not a time machine.
+
+## What Emergency Stop Does
+
+Emergency Stop:
+
+- Stops active Director timers.
+- Cancels current Director execution on your GM client.
+- Releases locks where possible.
+- Asks supported adapters to stop Director-owned work.
+
+Emergency Stop does not undo completed changes. Use rollback separately when rollback is available.
+
+## Add Triggers Safely
+
+The safest Trigger setup is:
+
+- Trigger selects the Beat.
+- GM sees the Beat.
+- GM chooses whether to run it.
+
+That means most Triggers should start with:
 
 ```json
-[
-  {
-    "name": "Wave two after two enemies fall",
-    "event": "enemyDefeatedCount",
-    "count": 2,
-    "action": "runBeat",
-    "once": true,
-    "enabled": true
-  }
-]
+"action": "selectBeat"
 ```
 
-`runBeat` asks for GM confirmation by default.
+Only change a Trigger to `runBeat` after you have tested it.
 
-To make it fully automatic:
+## Where To Put A Trigger
 
-```json
-[
-  {
-    "name": "Wave two after two enemies fall",
-    "event": "enemyDefeatedCount",
-    "count": 2,
-    "action": "runBeat",
-    "requiresConfirmation": false,
-    "once": true,
-    "enabled": true
-  }
-]
-```
+Put the Trigger on the Beat you want to happen.
 
-Use fully automatic runs carefully.
+Example:
+
+You want Beat 2 to become selected after two enemies die.
+
+Put the enemy-count Trigger on Beat 2.
+
+Not Beat 1. Beat 2.
 
 ## Trigger: Enemy Defeated Count
 
-Use this when you want the encounter to advance after enemies drop.
+Use this for waves, phase changes, or morale breaks.
 
-```json
-[
-  {
-    "name": "After three enemies fall",
-    "event": "enemyDefeatedCount",
-    "count": 3,
-    "action": "selectBeat",
-    "once": true,
-    "enabled": true
-  }
-]
-```
-
-## Trigger: Any Defeated Combatant Count
-
-Use this when you do not care if the defeated combatants are enemies, allies, or neutral.
-
-```json
-[
-  {
-    "name": "After four combatants fall",
-    "event": "combatantDefeatedCount",
-    "count": 4,
-    "action": "selectBeat",
-    "once": true,
-    "enabled": true
-  }
-]
-```
-
-## Trigger: Selected Token HP At 50 Percent
-
-Easy way:
-
-1. Select the Token to watch.
+1. Open the Sequence editor.
 2. Select the Beat you want to happen.
-3. Click **Add HP 50% Trigger**.
-4. Save the Beat.
+3. Click **Add Enemy Count Trigger**.
+4. In **Triggers JSON**, change the count.
+5. Save the Beat.
 
-The JSON will look roughly like:
+Example:
 
 ```json
 [
   {
-    "name": "Selected Token HP at 50%",
+    "name": "Wave two after two enemies fall",
+    "event": "enemyDefeatedCount",
+    "count": 2,
+    "action": "selectBeat",
+    "once": true,
+    "enabled": true
+  }
+]
+```
+
+This selects the Beat when two hostile combatants are defeated.
+
+## Trigger: Boss HP Threshold
+
+Use this for phase changes.
+
+Easy version:
+
+1. Select the boss Token.
+2. Open the Sequence editor.
+3. Select the phase-change Beat.
+4. Click **Add HP 50% Trigger**.
+5. Save the Beat.
+
+Example for 25 percent instead:
+
+```json
+[
+  {
+    "name": "Boss phase change at 25 percent",
     "event": "tokenHpAtOrBelow",
-    "threshold": 50,
+    "threshold": 25,
     "thresholdType": "percent",
     "comparison": "lte",
-    "tokenUuids": ["Scene.example.Token.example"],
-    "actorUuids": ["Actor.example"],
+    "tokenUuids": ["Scene.example.Token.boss"],
     "action": "selectBeat",
     "once": true,
     "enabled": true
@@ -216,14 +315,12 @@ The JSON will look roughly like:
 ]
 ```
 
-## Trigger: Token HP At A Number
-
-Use this for "when this boss reaches 20 HP."
+Example for exact HP:
 
 ```json
 [
   {
-    "name": "Boss bloodied at 20 HP",
+    "name": "Boss phase change at 20 HP",
     "event": "tokenHpAtOrBelow",
     "threshold": 20,
     "thresholdType": "hp",
@@ -236,20 +333,24 @@ Use this for "when this boss reaches 20 HP."
 ]
 ```
 
-## Trigger: Ally Death
+## Trigger: Ally Defeated
 
-Easy way:
+Use this for rescues, panic moments, villain reactions, or fail-forward scenes.
+
+Easy version:
 
 1. Select the ally Token.
-2. Select the Beat you want to happen.
+2. Select the Beat you want.
 3. Click **Add Ally Death Trigger**.
 4. Save the Beat.
 
-Without selected Tokens, the quick button creates a general ally defeated Trigger.
+If no Token is selected, the quick button creates a general ally defeated Trigger.
 
 ## Trigger: Combat Round
 
-Use this for timed encounter changes.
+Use this for timed events.
+
+Example:
 
 ```json
 [
@@ -264,14 +365,56 @@ Use this for timed encounter changes.
 ]
 ```
 
-## Make A Trigger Start Another Sequence
+This selects the Beat when Combat reaches round 3 or later.
 
-Use this when a Scene has multiple Sequences and one should hand off to another.
+## Make A Trigger Run A Beat
+
+Change:
+
+```json
+"action": "selectBeat"
+```
+
+to:
+
+```json
+"action": "runBeat"
+```
+
+By default, `runBeat` asks the GM for confirmation.
+
+If you want it fully automatic, add:
+
+```json
+"requiresConfirmation": false
+```
+
+Example:
 
 ```json
 [
   {
-    "name": "Start escape phase",
+    "name": "Auto-run wave two",
+    "event": "enemyDefeatedCount",
+    "count": 2,
+    "action": "runBeat",
+    "requiresConfirmation": false,
+    "once": true,
+    "enabled": true
+  }
+]
+```
+
+Use full automation only after testing it in a dummy fight.
+
+## Make A Trigger Start Another Sequence
+
+Use this when one encounter phase should hand off to another Sequence.
+
+```json
+[
+  {
+    "name": "Start escape sequence",
     "event": "enemyDefeatedCount",
     "count": 5,
     "action": "startSequence",
@@ -283,84 +426,56 @@ Use this when a Scene has multiple Sequences and one should hand off to another.
 ]
 ```
 
-If you do not set `targetBeatId`, the target Sequence starts at its starting Beat or first Beat.
+If `targetBeatId` is blank, the target Sequence uses its starting Beat or first Beat.
 
-## Make A Trigger Repeat
+## Prevent Trigger Accidents
 
-Most of the time, do not do this.
+Use these defaults:
 
-If you need a repeating Trigger:
-
-```json
-[
-  {
-    "name": "Every time another enemy count update qualifies",
-    "event": "enemyDefeatedCount",
-    "count": 1,
-    "action": "selectBeat",
-    "once": false,
-    "cooldownMs": 10000,
-    "enabled": true
-  }
-]
-```
-
-`cooldownMs` prevents rapid refiring.
-
-## Keep Triggers From Surprising You
-
-Safe defaults:
-
-- Leave `"once": true`.
-- Leave `"action": "selectBeat"` until you trust the setup.
-- Use **Validate** before the session.
-- Use **Reset State** only when you intentionally want once-only Triggers to be able to fire again.
+- Keep `"once": true`.
+- Keep `"action": "selectBeat"` while testing.
+- Keep GM confirmation on for `runBeat`.
+- Validate the Beat before the session.
 - Do not add a new Trigger while its condition is already true unless you want it to fire soon.
+- Do not press **Reset State** unless you want once-only Triggers to be able to fire again.
 
-## Use Other Modules
+Once a once-only Trigger fires, the module records that in the Scene. Foundry can send more combat or HP updates, but the same Trigger should not fire again unless its state is reset or the Trigger is replaced.
 
-If an integration shows **Ready**, its Actions should be available in the Action dropdown.
+## Use Integrations
 
-Basic flow:
+Look at Integration Health.
+
+Ready:
+
+The Director found enough public API to use the module.
+
+Detected only:
+
+The Director sees the module, but did not confirm a safe usable API for the Action.
+
+Config only:
+
+The module exposes status or configuration behavior, but not enough to drive encounter cues.
+
+To add an integration Action:
 
 1. Open the Sequence editor.
 2. Select a Beat.
-3. Pick the integration Action from the Action dropdown.
+3. Choose the integration Action from the Action dropdown.
 4. Click **Add Action**.
-5. Fill out the Action config.
+5. Fill in the config.
 6. Save.
-7. Validate the Beat.
+7. Validate.
 
-If an integration says **Detected only**, the Director can see the module but did not confirm a usable public API for the Action you want.
+## Good First Trigger Test
 
-If an integration says **Config only**, it exposes status or configuration APIs, but not enough to safely drive encounter Actions.
+Do this before using Triggers in a real session.
 
-## If Something Does Not Work
-
-Check these in order:
-
-1. Are you logged in as GM?
-2. Is the module enabled in Manage Modules?
-3. Does the Director show the expected version?
-4. Did you do a full browser reload after updating?
-5. Is the Sequence bound to the current Scene?
-6. Did you select the right Beat?
-7. Did you save the Beat after changing Trigger JSON?
-8. Does **Validate** show warnings?
-9. Are the target Tokens actually in Combat?
-10. Are enemies marked hostile?
-11. Are defeated combatants marked defeated or at 0 HP?
-12. Is the world setting **Enable automation Triggers** on?
-
-## Good First Test
-
-Use this test before trusting Triggers in a real session:
-
-1. Make a tiny test Scene.
-2. Add two enemy Tokens.
+1. Make a test Scene.
+2. Add two hostile enemy Tokens.
 3. Create a Sequence.
-4. Beat 1: combat setup.
-5. Beat 2: GM note that says "Trigger worked."
+4. Beat 1: add combat setup.
+5. Beat 2: add a GM note Action named `Trigger worked`.
 6. Put this Trigger on Beat 2:
 
 ```json
@@ -376,8 +491,121 @@ Use this test before trusting Triggers in a real session:
 ]
 ```
 
-7. Start combat.
+7. Run Beat 1.
 8. Defeat one enemy.
-9. Confirm the Director jumps to Beat 2.
+9. Confirm the Director selects Beat 2.
+10. Manually run Beat 2.
 
-After that works, change `selectBeat` to `runBeat` if you want the Beat to execute.
+After that works, test `runBeat` with confirmation on.
+
+## Common Problems
+
+The Director does not open:
+
+- Make sure you are GM.
+- Make sure the module is enabled.
+- Reload the browser.
+
+My Beat will not run:
+
+- Click **Validate**.
+- Check the execution log.
+- Check missing Token, Scene, or integration references.
+
+My Trigger does not fire:
+
+- Make sure automation Triggers are enabled in module settings.
+- Make sure the Beat was saved after editing Trigger JSON.
+- Make sure the Sequence is bound to the current Scene.
+- Make sure the enemy Token is hostile if using `enemyDefeatedCount`.
+- Make sure the Token is in Combat.
+- Make sure the combatant is marked defeated or at 0 HP.
+- Make sure the Trigger has not already fired once.
+
+My Trigger fired too early:
+
+- The condition may already have been true when you saved it.
+- Use **Reset State** only when you want it armed again.
+- Prefer `selectBeat` before using `runBeat`.
+
+An integration Action is missing:
+
+- Check Integration Health.
+- Make sure the other module is active.
+- If it says **Detected only**, the Director may not have a confirmed public API for that module feature.
+
+The UI still shows an old version:
+
+- Do a full browser reload.
+- Restart Foundry if needed.
+- Confirm the module manifest points at the current runtime folder.
+
+## Best Habits
+
+- Name every Beat clearly.
+- Name every Action like a cue.
+- Keep Beats short.
+- Validate before the session.
+- Use Triggers to select Beats before using them to run Beats.
+- Put dangerous effects behind confirmation.
+- Test integrations before game night.
+- Keep the execution log visible when debugging.
+- Make one small dummy encounter to test big automation ideas.
+
+## Tiny Example Encounter
+
+Sequence: `Bridge Ambush`
+
+Beat 1: `Start the ambush`
+
+- Reveal hidden bandits.
+- Create Combat.
+- Add bandits to Combat.
+- Start Combat.
+
+Beat 2: `Archers join`
+
+- Reveal rooftop archers.
+- Add archers to Combat.
+- Pan GM camera to rooftops.
+
+Trigger on Beat 2:
+
+```json
+[
+  {
+    "name": "Archers after two bandits fall",
+    "event": "enemyDefeatedCount",
+    "count": 2,
+    "action": "selectBeat",
+    "once": true,
+    "enabled": true
+  }
+]
+```
+
+Beat 3: `Boss flees`
+
+- Show GM note.
+- Set boss Token destination.
+- Play escape music or ambience if configured.
+
+Trigger on Beat 3:
+
+```json
+[
+  {
+    "name": "Boss flees at 25 percent",
+    "event": "tokenHpAtOrBelow",
+    "threshold": 25,
+    "thresholdType": "percent",
+    "comparison": "lte",
+    "tokenUuids": ["Scene.example.Token.boss"],
+    "action": "selectBeat",
+    "once": true,
+    "enabled": true
+  }
+]
+```
+
+That is enough to run a staged tactical encounter without letting automation take the wheel away from the GM.
