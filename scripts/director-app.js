@@ -84,6 +84,7 @@ export class DirectorApplication extends HandlebarsApplicationMixin(ApplicationV
       ...status,
       statusClass: statusClass(status.status),
       capabilitiesText: status.capabilities?.join(", ") || "None",
+      apiMethodsText: status.apiMethods?.join(", ") || "",
       unsupportedText: status.unsupported?.join(" ") || ""
     }));
     const logs = (await this.services.log.list(scene)).slice().reverse().slice(0, 80);

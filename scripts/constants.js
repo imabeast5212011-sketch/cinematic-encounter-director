@@ -1,6 +1,6 @@
 export const MODULE_ID = "cinematic-encounter-director";
 export const MODULE_TITLE = "Cinematic Encounter Director";
-export const MODULE_VERSION = "0.1.8";
+export const MODULE_VERSION = "0.1.9";
 export const SCHEMA_VERSION = 1;
 
 export const TEMPLATE_PATHS = Object.freeze({

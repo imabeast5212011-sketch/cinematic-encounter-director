@@ -6,6 +6,49 @@ function normalizeText(value) {
   return String(value ?? "").toLocaleLowerCase().replace(/[^a-z0-9]+/g, " ").trim();
 }
 
+function publicKeyNames(object) {
+  try {
+    return Object.keys(object ?? {});
+  } catch (_error) {
+    return [];
+  }
+}
+
+export function listPublicApiMethods(api, prefix = "", depth = 0) {
+  if (!api || typeof api !== "object" || depth > 1) return [];
+  const methods = [];
+  for (const key of publicKeyNames(api)) {
+    if (!key || key.startsWith("_")) continue;
+    let value;
+    try {
+      value = api[key];
+    } catch (_error) {
+      continue;
+    }
+    const name = `${prefix}${key}`;
+    if (typeof value === "function") methods.push(name);
+    else if (value && typeof value === "object" && !Array.isArray(value)) {
+      methods.push(...listPublicApiMethods(value, `${name}.`, depth + 1));
+    }
+  }
+  return [...new Set(methods)].slice(0, 80);
+}
+
+export function findPublicApiMethod(api, candidates = []) {
+  for (const candidate of candidates.map((entry) => String(entry ?? "").trim()).filter(Boolean)) {
+    const path = candidate.split(".");
+    let owner = api;
+    for (const segment of path.slice(0, -1)) {
+      owner = owner?.[segment];
+      if (!owner) break;
+    }
+    const key = path.at(-1);
+    const fn = owner?.[key];
+    if (typeof fn === "function") return { name: candidate, owner, fn };
+  }
+  return null;
+}
+
 export class BaseAdapter {
   constructor({ providerId, displayName, setting = "", moduleIdCandidates = [], titleMatchers = [] }) {
     this.providerId = providerId;
@@ -93,6 +136,7 @@ export class BaseAdapter {
       const bridge = this.getDirectorBridge(api);
       const bridgeCapabilities = await this.getBridgeCapabilities(bridge);
       const capabilities = this.getNativeCapabilities(api, bridge).concat(bridgeCapabilities);
+      const apiMethods = listPublicApiMethods(api);
       const apiDetected = Boolean(api);
       const status = this.statusFromDetection(module, api, bridge, capabilities);
       return this._status = {
@@ -105,6 +149,7 @@ export class BaseAdapter {
         apiDetected,
         status,
         capabilities,
+        apiMethods,
         unsupported: this.getUnsupportedCapabilities(api, bridge),
         lastError: this.lastError,
         liveVerificationRequired: status !== "Ready"
