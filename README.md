@@ -1,6 +1,6 @@
 # Cinematic Encounter Director
 
-Version 0.1.16 for Foundry VTT v14.
+Version 0.1.17 for Foundry VTT v14.
 
 Cinematic Encounter Director is a GM-only tactical orchestration module for preparing and running encounters as manually triggered Sequences, Beats, and Actions. It coordinates Foundry-native Scene, Token, light, wall, door, Combat, camera, chat, pause, and optional Playlist actions while leaving cinematic, audio, environmental, HUD, timeline, and session-planning systems in their own modules.
 
@@ -32,7 +32,9 @@ Live Foundry testing was not available in this development environment. This pac
 
 A **Sequence** is the encounter plan. It has a stable id, name, description, owning Scene UUID, ordered Beat ids, schema version, metadata, tags, GM notes, enabled state, and archived state.
 
-A **Beat** is one manual moment in the encounter. It has a stable id, name, description, ordered Action ids, manual execution state, optional color or icon, GM notes, confirmation controls, failure behavior, and an informational danger level.
+A **Beat** is one manual moment in the encounter. It has a stable id, name, description, ordered Action ids, optional automation Triggers, manual execution state, optional color or icon, GM notes, confirmation controls, failure behavior, and an informational danger level.
+
+A **Trigger** is an optional GM-authored condition on a Beat. It can select a Beat, run a Beat, or start a Sequence when combatants are defeated, watched Tokens hit an HP threshold, watched Tokens are defeated, allies are defeated, or combat reaches a round.
 
 An **Action** is a declarative instruction. It has a stable id, action type, name, enabled state, target adapter, config payload, execution mode, optional parallel group, failure policy, precondition payload, bounded delay, confirmation flag, validation result, execution result, and rollback metadata when supported.
 
@@ -40,13 +42,13 @@ No arbitrary JavaScript execution is allowed. Imported JSON is treated as untrus
 
 ## Storage
 
-Version 0.1.16 stores Scene-bound Sequence data in module-owned Scene flags:
+Version 0.1.17 stores Scene-bound Sequence data in module-owned Scene flags:
 
 ```text
 cinematic-encounter-director.sceneSequences
 ```
 
-Execution locks, execution logs, and rollback snapshots are also module-owned flags. Browser local storage is not used for authoritative encounter data.
+Execution locks, execution logs, rollback snapshots, and Trigger fire-state are also module-owned flags. Browser local storage is not used for authoritative encounter data.
 
 Schema versioning is enforced. Future schema versions are not silently executed. Import rejects unsupported future versions and forbidden executable-looking fields.
 
@@ -62,6 +64,7 @@ Use the editor to:
 - Add, duplicate, move, enable, disable, edit, or delete Actions.
 - Build a basic combat setup from currently selected canvas Tokens.
 - Add a reinforcement wave from currently selected canvas Tokens.
+- Add common Beat Triggers from currently selected canvas Tokens.
 - Configure failure policy, execution mode, parallel group, delay, confirmation, and declarative config JSON.
 - Validate a Beat before running it.
 
@@ -100,6 +103,33 @@ GM controls include:
 - Reset Execution State.
 
 Next Beat only changes selection. It does not run the next Beat automatically unless the GM enables the client setting to select the next Beat after successful completion; even then, execution remains manual.
+
+## Automation Triggers
+
+Beat Triggers are optional and GM-only. They are evaluated by one active GM client against the current Scene's Combat, Tokens, and Actors. A once-only Trigger records its fire state in the Scene so it will not keep firing while the same condition remains true. Reset Execution State clears stored Trigger fire-state for the selected Sequence.
+
+Common editor shortcuts add:
+
+- Enemy defeated count.
+- Selected Token HP at or below 50 percent.
+- Selected ally/Token defeated.
+
+Trigger JSON is stored on the Beat as an array. Example:
+
+```json
+[
+  {
+    "name": "Wave two after two enemies fall",
+    "event": "enemyDefeatedCount",
+    "count": 2,
+    "action": "selectBeat",
+    "once": true,
+    "enabled": true
+  }
+]
+```
+
+Set `action` to `runBeat` or `startSequence` for hands-free execution. Those actions require GM confirmation by default unless the Trigger JSON sets `"requiresConfirmation": false`.
 
 ## Delays And Wait Points
 
@@ -206,6 +236,8 @@ Available methods:
 - `registerActionType(actionType)`.
 - `validateActionConfig(action, context)`.
 - `requestExecution({ sequenceId, beatId, actionId, dryRun, scene })`.
+- `evaluateTriggers(scene)`.
+- `resetTriggerState(sequenceId, scene)`.
 - `readSequenceMetadata(scene)`.
 - `subscribe(eventName, callback)`.
 
@@ -221,7 +253,7 @@ The API does not expose unrestricted document mutation.
 - If a lock remains after a disconnect, wait for the stale-lock timeout or reload with a GM client.
 - If imported references are unresolved, open each Action and remap UUIDs or external ids.
 - If native Playlist actions are unavailable, enable the native Playlist fallback world setting.
-- If Foundry appears to keep using an old Director version after update, force a full browser reload. Version 0.1.16 loads the runtime from a versioned folder path so browser module caches cannot reuse older `scripts/main.js` imports.
+- If Foundry appears to keep using an old Director version after update, force a full browser reload. Version 0.1.17 loads the runtime from a versioned folder path so browser module caches cannot reuse older `scripts/main.js` imports.
 
 ## Current Limitations
 

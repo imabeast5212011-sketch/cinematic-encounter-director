@@ -96,6 +96,10 @@
       <label><input type="checkbox" name="stopPointAfter" {{#if selectedBeat.stopPointAfter}}checked{{/if}}> Stop point after execution</label>
       <label><input type="checkbox" name="continueOnActionFailure" {{#if selectedBeat.continueOnActionFailure}}checked{{/if}}> Continue after failure</label>
     </div>
+    <label class="ced-trigger-json">
+      <span>Triggers JSON</span>
+      <textarea name="triggersJson" rows="4" spellcheck="false">{{triggersJson}}</textarea>
+    </label>
   </form>
 
   <section class="ced-editor-panel ced-actions-panel">
@@ -118,6 +122,9 @@
       <div>
         <button type="button" data-action="add-combat-setup"><i class="fa-solid fa-swords"></i> Add Combat Setup From Selected Tokens</button>
         <button type="button" data-action="add-reinforcement-wave"><i class="fa-solid fa-user-plus"></i> Add Reinforcement Wave</button>
+        <button type="button" data-action="add-enemy-count-trigger"><i class="fa-solid fa-skull-crossbones"></i> Add Enemy Count Trigger</button>
+        <button type="button" data-action="add-hp-threshold-trigger"><i class="fa-solid fa-heart-pulse"></i> Add HP 50% Trigger</button>
+        <button type="button" data-action="add-ally-death-trigger"><i class="fa-solid fa-user-shield"></i> Add Ally Death Trigger</button>
       </div>
     </div>
     <ol class="ced-edit-list ced-action-edit-list">
