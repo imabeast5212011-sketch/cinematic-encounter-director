@@ -1,15 +1,14 @@
 export const MODULE_ID = "cinematic-encounter-director";
 export const MODULE_TITLE = "Cinematic Encounter Director";
-export const MODULE_VERSION = "0.1.14";
+export const MODULE_VERSION = "0.1.15";
 export const SCHEMA_VERSION = 1;
-const TEMPLATE_VERSION = `?v=${MODULE_VERSION}`;
 
 export const TEMPLATE_PATHS = Object.freeze({
-  DIRECTOR: `modules/${MODULE_ID}/templates/director.hbs${TEMPLATE_VERSION}`,
-  SEQUENCE_EDITOR: `modules/${MODULE_ID}/templates/sequence-editor.hbs${TEMPLATE_VERSION}`,
-  ACTION_EDITOR: `modules/${MODULE_ID}/templates/action-editor.hbs${TEMPLATE_VERSION}`,
-  INTEGRATION_HEALTH: `modules/${MODULE_ID}/templates/integration-health.hbs${TEMPLATE_VERSION}`,
-  EXECUTION_LOG: `modules/${MODULE_ID}/templates/execution-log.hbs${TEMPLATE_VERSION}`
+  DIRECTOR: `modules/${MODULE_ID}/templates/director.hbs`,
+  SEQUENCE_EDITOR: `modules/${MODULE_ID}/templates/sequence-editor.hbs`,
+  ACTION_EDITOR: `modules/${MODULE_ID}/templates/action-editor.hbs`,
+  INTEGRATION_HEALTH: `modules/${MODULE_ID}/templates/integration-health.hbs`,
+  EXECUTION_LOG: `modules/${MODULE_ID}/templates/execution-log.hbs`
 });
 
 export const FLAGS = Object.freeze({
