@@ -1,4 +1,4 @@
-import { MODULE_ID, MODULE_TITLE, RESULT_STATUS, SETTINGS, TEMPLATE_PATHS } from "./constants.js";
+import { MODULE_ID, MODULE_TITLE, MODULE_VERSION, RESULT_STATUS, SETTINGS, TEMPLATE_PATHS } from "./constants.js";
 import { getSetting } from "./settings.js";
 import { createResult } from "./state/schema.js";
 import { SequenceEditor } from "./sequence-editor.js";
@@ -91,6 +91,7 @@ export class DirectorApplication extends HandlebarsApplicationMixin(ApplicationV
     return {
       ...context,
       isGM,
+      moduleVersion: MODULE_VERSION,
       enabled: getSetting(SETTINGS.ENABLED),
       compactMode: getSetting(SETTINGS.COMPACT_MODE),
       showIntegrationHealth: getSetting(SETTINGS.SHOW_INTEGRATION_HEALTH),

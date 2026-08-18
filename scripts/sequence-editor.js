@@ -1,4 +1,4 @@
-import { DANGER_LEVELS, MODULE_ID, RESULT_STATUS, TEMPLATE_PATHS } from "./constants.js";
+import { DANGER_LEVELS, MODULE_ID, MODULE_VERSION, RESULT_STATUS, TEMPLATE_PATHS } from "./constants.js";
 import { defaultIntegrationActionPatch } from "./actions/integration-actions.js";
 import { defaultActionPatch } from "./actions/native-actions.js";
 import { ActionEditor } from "./action-editor.js";
@@ -84,6 +84,7 @@ export class SequenceEditor extends HandlebarsApplicationMixin(ApplicationV2) {
     return {
       ...context,
       sequence,
+      moduleVersion: MODULE_VERSION,
       beats: beats.map((beat, index) => ({ ...beat, index: index + 1, selected: beat.id === selectedBeat?.id })),
       selectedBeat,
       actions,

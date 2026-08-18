@@ -1,4 +1,4 @@
-import { EXECUTION_MODES, FAILURE_POLICIES, MODULE_ID, RESULT_STATUS, TEMPLATE_PATHS } from "./constants.js";
+import { EXECUTION_MODES, FAILURE_POLICIES, MODULE_ID, MODULE_VERSION, RESULT_STATUS, TEMPLATE_PATHS } from "./constants.js";
 import { defaultIntegrationActionPatch } from "./actions/integration-actions.js";
 import { defaultActionPatch } from "./actions/native-actions.js";
 import { createResult, safeInteger } from "./state/schema.js";
@@ -66,6 +66,7 @@ export class ActionEditor extends HandlebarsApplicationMixin(ApplicationV2) {
     return {
       ...context,
       sequence,
+      moduleVersion: MODULE_VERSION,
       beat,
       action,
       actionTypes,
