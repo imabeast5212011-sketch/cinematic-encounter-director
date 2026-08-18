@@ -14,6 +14,21 @@ Run these tests on the remote Foundry VTT v14 server with the D&D 5e system. Rec
 - Check for duplicate hooks, duplicate windows, or duplicate Scene controls.
 - Check browser console.
 
+## Director UI
+
+- Confirm the module reports version 0.1.18.
+- Confirm the Director shows Run and Plan mode tabs.
+- Switch to Plan mode, close the Director, reopen it, and confirm the client remembers Plan mode.
+- Switch back to Run mode and confirm the selected Beat controls are visible.
+- Resize the Director narrow and wide.
+- Confirm navigation, selected Beat/actions, Integration Health, and Execution Log remain reachable by scrolling.
+- Confirm the Beat cue list shows order, name, danger, state, Action count, and Trigger count.
+- Confirm selected Beat header shows danger, state, Trigger summary, and Action count.
+- Confirm Action rows show plain-language summaries and provider/type/status badges.
+- Confirm Integration Health collapses and expands.
+- Confirm Execution Log filters work for all, success, warning, failure, Trigger, and rollback.
+- Confirm Emergency Stop confirmation explains that it does not undo completed changes.
+
 ## Sequence Editing
 
 - Create Sequence.
@@ -28,6 +43,12 @@ Run these tests on the remote Foundry VTT v14 server with the D&D 5e system. Rec
 - Add Actions.
 - Reorder Actions with move-up and move-down controls.
 - Disable and re-enable Actions.
+- Add quick combat setup Actions from selected canvas Tokens.
+- Add reinforcement wave Actions from selected canvas Tokens.
+- Edit Beat Triggers with the structured Trigger form.
+- Save a Trigger as Select Beat and confirm it remains non-executing.
+- Save a Trigger as Run Beat and confirm GM confirmation stays on by default.
+- Use Advanced Trigger JSON for an unusual Trigger payload and confirm it persists.
 - Export one Sequence.
 - Export all Scene Sequences.
 - Import exported Sequence.
@@ -57,6 +78,8 @@ Run these tests on the remote Foundry VTT v14 server with the D&D 5e system. Rec
 - Pan all active players.
 - Pause and unpause game.
 - Use native Playlist fallback only after enabling its setting.
+- Configure common native Actions through the structured Action form.
+- Use Advanced Config JSON for an unusual native payload and confirm it persists.
 - Test missing and deleted targets.
 - Test actions targeting the wrong Scene.
 
@@ -69,6 +92,7 @@ Run these tests on the remote Foundry VTT v14 server with the D&D 5e system. Rec
 - Handle deleted SessionFlow content.
 - Handle inactive SessionFlow.
 - Confirm no duplicated SessionFlow functionality.
+- Configure a SessionFlow Action through the structured integration form.
 
 ## Exalted Scenes
 
@@ -81,6 +105,7 @@ Run these tests on the remote Foundry VTT v14 server with the D&D 5e system. Rec
 - Handle deleted presentation.
 - Handle inactive module.
 - Confirm no private flags or UI clicking are used.
+- Configure an Exalted Scenes Action through the structured integration form.
 
 ## Narrator's Jukebox
 
@@ -95,6 +120,7 @@ Run these tests on the remote Foundry VTT v14 server with the D&D 5e system. Rec
 - Ensure Emergency Stop does not kill unrelated audio.
 - Handle deleted track.
 - Handle inactive module.
+- Configure a Narrator's Jukebox Action through the structured integration form.
 
 ## FXMaster
 
@@ -108,6 +134,7 @@ Run these tests on the remote Foundry VTT v14 server with the D&D 5e system. Rec
 - Test dangerous clear-all confirmation.
 - Handle deleted preset.
 - Handle inactive module.
+- Configure an FXMaster Action through the structured integration form.
 
 ## COTS Character HUD
 
@@ -117,6 +144,7 @@ Run these tests on the remote Foundry VTT v14 server with the D&D 5e system. Rec
 - Fall back to configured GM speaker or selected Token actor when an Action has no Actor UUID.
 - Fail safely if no public API exists.
 - Confirm no DOM manipulation.
+- Configure a Character HUD Action through the structured integration form.
 
 ## Cinematic Combat Timeline
 
@@ -129,6 +157,7 @@ Run these tests on the remote Foundry VTT v14 server with the D&D 5e system. Rec
 - Remove countdown only if a future confirmed public API exists.
 - Fail safely if no countdown mutation API exists.
 - Confirm no fake Combatants or initiative changes.
+- Configure a Combat Timeline Action through the structured integration form.
 
 ## Execution
 

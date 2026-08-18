@@ -1,138 +1,521 @@
 {{#unless isGM}}
 <div class="ced-empty"><strong>GM access required.</strong></div>
 {{else}}
-<form data-form="action" class="ced-action-form">
-  <header>
-    <h2>{{action.name}} <span class="ced-version">v{{moduleVersion}}</span></h2>
-    <div>
-      <button type="button" data-action="validate-action"><i class="fa-solid fa-magnifying-glass"></i> Validate</button>
-      <button type="button" data-action="reset-default-config"><i class="fa-solid fa-rotate"></i> Defaults</button>
-      <button type="button" data-action="save-action" class="ced-primary"><i class="fa-solid fa-floppy-disk"></i> Save Action</button>
+<form data-form="action" class="ced-action-form ced-action-workbench">
+  <header class="ced-action-editor-head">
+    <div class="ced-title-block">
+      <h2><i class="{{form.providerIcon}}"></i> {{action.name}} <span class="ced-version">v{{moduleVersion}}</span></h2>
+      <span>{{form.providerLabel}} / {{form.typeLabel}}</span>
+    </div>
+    <div class="ced-toolbar-actions">
+      <button type="button" data-action="validate-action" title="Validate Action"><i class="fa-solid fa-magnifying-glass"></i> Validate</button>
+      <button type="button" data-action="reset-default-config" title="Reset Defaults"><i class="fa-solid fa-rotate"></i> Defaults</button>
+      <button type="button" data-action="save-action" class="ced-primary" title="Save Action"><i class="fa-solid fa-floppy-disk"></i> Save Action</button>
     </div>
   </header>
 
-  <div class="ced-grid-two">
-    <label>
-      <span>Name</span>
-      <input type="text" name="name" value="{{action.name}}" maxlength="120">
-    </label>
-    <label>
-      <span>Type</span>
-      <select name="type">
-        {{#each actionTypes}}
-        <option value="{{id}}" {{#if selected}}selected{{/if}}>{{label}} - {{providerStatus}}</option>
-        {{/each}}
-      </select>
-    </label>
-  </div>
+  <section class="ced-panel ced-action-overview">
+    <div class="ced-action-summary-line">
+      <span class="ced-chip ced-chip-{{form.dangerClass}}">{{form.dangerLabel}}</span>
+      <span class="ced-chip">{{form.rollbackLabel}}</span>
+      <span class="ced-chip">{{form.providerLabel}}</span>
+    </div>
+    <p>{{form.summary}}</p>
+    {{#if form.description}}<small>{{form.description}}</small>{{/if}}
+  </section>
 
-  <div class="ced-grid-two">
-    <label>
-      <span>Failure Policy</span>
-      <select name="failurePolicy">
-        {{#each failurePolicies}}
-        <option value="{{value}}" {{#if selected}}selected{{/if}}>{{value}}</option>
-        {{/each}}
-      </select>
-    </label>
-    <label>
-      <span>Execution Mode</span>
-      <select name="executionMode">
-        {{#each executionModes}}
-        <option value="{{value}}" {{#if selected}}selected{{/if}}>{{value}}</option>
-        {{/each}}
-      </select>
-    </label>
-  </div>
-
-  <div class="ced-grid-two">
-    <label>
-      <span>Parallel Group</span>
-      <input type="text" name="parallelGroup" value="{{action.parallelGroup}}">
-    </label>
-    <label>
-      <span>Delay After (ms)</span>
-      <input type="number" name="delayAfterMs" min="0" max="60000" step="100" value="{{action.delayAfterMs}}">
-    </label>
-  </div>
-
-  <div class="ced-check-row">
-    <label><input type="checkbox" name="enabled" {{#if action.enabled}}checked{{/if}}> Enabled</label>
-    <label><input type="checkbox" name="requiresConfirmation" {{#if action.requiresConfirmation}}checked{{/if}}> Confirm before execution</label>
-  </div>
-
-  <section class="ced-reference-tools" aria-label="Reference selectors">
-    <header>
-      <h3>References</h3>
-    </header>
-    <div class="ced-grid-two">
+  <div class="ced-action-form-grid">
+    <section class="ced-panel">
+      <header><h3>Identity</h3></header>
       <label>
-        <span>Scene</span>
-        <select data-field="picker-scene">
-          {{#each scenes}}
-          <option value="{{uuid}}">{{name}}</option>
+        <span>Name</span>
+        <input type="text" name="name" value="{{action.name}}" maxlength="120">
+      </label>
+      <label>
+        <span>Action Type</span>
+        <select name="type">
+          {{#each actionTypes}}
+          <option value="{{id}}" {{#if selected}}selected{{/if}} {{#if disabled}}disabled{{/if}}>{{label}} - {{providerStatus}}</option>
           {{/each}}
         </select>
       </label>
+      <div class="ced-check-row">
+        <label><input type="checkbox" name="enabled" {{#if action.enabled}}checked{{/if}}> Enabled</label>
+        <label><input type="checkbox" name="requiresConfirmation" {{#if action.requiresConfirmation}}checked{{/if}}> Confirm before execution</label>
+      </div>
+    </section>
+
+    <section class="ced-panel">
+      <header><h3>Run Behavior</h3></header>
+      <div class="ced-grid-two">
+        <label>
+          <span>Failure Policy</span>
+          <select name="failurePolicy">
+            {{#each failurePolicies}}
+            <option value="{{value}}" {{#if selected}}selected{{/if}}>{{label}}</option>
+            {{/each}}
+          </select>
+        </label>
+        <label>
+          <span>Execution Mode</span>
+          <select name="executionMode">
+            {{#each executionModes}}
+            <option value="{{value}}" {{#if selected}}selected{{/if}}>{{label}}</option>
+            {{/each}}
+          </select>
+        </label>
+      </div>
+      <div class="ced-grid-two">
+        <label>
+          <span>Parallel Group</span>
+          <input type="text" name="parallelGroup" value="{{action.parallelGroup}}">
+        </label>
+        <label>
+          <span>Delay After (ms)</span>
+          <input type="number" name="delayAfterMs" min="0" max="60000" step="100" value="{{action.delayAfterMs}}">
+        </label>
+      </div>
+    </section>
+  </div>
+
+  <section class="ced-panel ced-config-panel">
+    <header>
+      <div>
+        <h3>Configuration</h3>
+        <span>{{form.typeLabel}}</span>
+      </div>
+    </header>
+
+    {{#if form.isMessage}}
+    <section class="ced-form-section">
+      <header><h4>Message</h4></header>
+      <label>
+        <span>{{#if form.isWait}}GM Prompt{{else}}Text{{/if}}</span>
+        <textarea name="message" rows="4">{{form.message}}</textarea>
+      </label>
+      {{#if form.isChatMessage}}
+      <div class="ced-check-row">
+        <label><input type="checkbox" name="whisperGmOnly" {{#if form.config.whisperGmOnly}}checked{{/if}}> GM-only whisper</label>
+      </div>
+      {{/if}}
+    </section>
+    {{/if}}
+
+    {{#if form.isDelay}}
+    <section class="ced-form-section">
+      <header><h4>Timer</h4></header>
+      <label>
+        <span>Duration (ms)</span>
+        <input type="number" name="durationMs" min="0" max="60000" step="100" value="{{form.config.durationMs}}">
+      </label>
+    </section>
+    {{/if}}
+
+    {{#if form.isScene}}
+    <section class="ced-form-section">
+      <header><h4>Scene</h4></header>
+      <div class="ced-grid-two">
+        <label>
+          <span>Scene</span>
+          <select name="sceneUuid" data-field="picker-scene">
+            <option value="">Active Scene</option>
+            {{#each scenes}}
+            <option value="{{uuid}}" {{#if selected}}selected{{/if}}>{{name}}</option>
+            {{/each}}
+          </select>
+        </label>
+        <div class="ced-reference-actions">
+          <button type="button" data-action="apply-scene"><i class="fa-solid fa-location-dot"></i> Use Selected Scene</button>
+        </div>
+      </div>
+      {{#if form.isDarkness}}
+      <label>
+        <span>Darkness</span>
+        <input type="number" name="darkness" min="0" max="1" step="0.05" value="{{form.config.darkness}}">
+      </label>
+      {{/if}}
+      {{#if form.isSceneEnvironment}}
+      <label>
+        <span>Scene Updates JSON</span>
+        <textarea name="updatesJson" rows="5" spellcheck="false">{{form.updatesJson}}</textarea>
+      </label>
+      {{/if}}
+    </section>
+    {{/if}}
+
+    {{#if form.isToken}}
+    <section class="ced-form-section">
+      <header><h4>Tokens</h4></header>
+      {{#if form.isMoveTokens}}
+      <label>
+        <span>Moves JSON</span>
+        <textarea name="movesJson" rows="7" spellcheck="false">{{form.movesJson}}</textarea>
+      </label>
+      {{else}}
+      <label>
+        <span>Token UUIDs</span>
+        <textarea name="tokenUuids" rows="3" spellcheck="false">{{form.tokenRefs}}</textarea>
+      </label>
+      {{/if}}
       <div class="ced-reference-actions">
-        <button type="button" data-action="apply-scene"><i class="fa-solid fa-location-dot"></i> Use Scene</button>
         <button type="button" data-action="apply-controlled-tokens"><i class="fa-solid fa-user-group"></i> Use Controlled Tokens</button>
       </div>
-    </div>
-    <div class="ced-grid-two">
+      {{#if form.isTokenVisibility}}
+      <label>
+        <span>Visibility</span>
+        <select name="hidden">
+          {{#each form.hiddenOptions}}
+          <option value="{{value}}" {{#if selected}}selected{{/if}}>{{label}}</option>
+          {{/each}}
+        </select>
+      </label>
+      {{/if}}
+      {{#if form.isElevation}}
+      <label>
+        <span>Elevation</span>
+        <input type="number" name="elevation" step="1" value="{{form.config.elevation}}">
+      </label>
+      {{/if}}
+      {{#if form.isDisposition}}
+      <label>
+        <span>Disposition</span>
+        <select name="disposition">
+          {{#each form.dispositionOptions}}
+          <option value="{{value}}" {{#if selected}}selected{{/if}}>{{label}}</option>
+          {{/each}}
+        </select>
+      </label>
+      {{/if}}
+      {{#if form.isCombat}}
+      <div class="ced-check-row">
+        <label><input type="checkbox" name="createCombatIfMissing" {{#if form.config.createCombatIfMissing}}checked{{/if}}> Create Combat if needed</label>
+      </div>
+      {{/if}}
+    </section>
+    {{/if}}
+
+    {{#if form.isLight}}
+    <section class="ced-form-section">
+      <header><h4>Ambient Lights</h4></header>
+      <label>
+        <span>AmbientLight UUIDs</span>
+        <textarea name="lightUuids" rows="3" spellcheck="false">{{form.lightRefs}}</textarea>
+      </label>
+      <label>
+        <span>Updates JSON</span>
+        <textarea name="updatesJson" rows="5" spellcheck="false">{{form.updatesJson}}</textarea>
+      </label>
       <div class="ced-reference-actions">
         <button type="button" data-action="apply-controlled-lights"><i class="fa-solid fa-lightbulb"></i> Use Controlled Lights</button>
-        <button type="button" data-action="apply-controlled-walls"><i class="fa-solid fa-door-open"></i> Use Controlled Walls</button>
       </div>
+    </section>
+    {{/if}}
+
+    {{#if form.isWall}}
+    <section class="ced-form-section">
+      <header><h4>Walls And Doors</h4></header>
       <label>
-        <span>Users</span>
-        <select data-field="picker-users" multiple size="4">
-          {{#each users}}
-          <option value="{{id}}">{{name}}{{#if isGM}} (GM){{/if}}</option>
-          {{/each}}
-        </select>
+        <span>Wall UUIDs</span>
+        <textarea name="wallUuids" rows="3" spellcheck="false">{{form.wallRefs}}</textarea>
       </label>
-    </div>
-    <div class="ced-grid-two">
       <label>
-        <span>Playlist</span>
-        <select data-field="picker-playlist">
-          {{#each playlists}}
-          <option value="{{uuid}}">{{name}}</option>
-          {{/each}}
-        </select>
+        <span>Updates JSON</span>
+        <textarea name="updatesJson" rows="5" spellcheck="false">{{form.updatesJson}}</textarea>
       </label>
       <div class="ced-reference-actions">
-        <button type="button" data-action="apply-users"><i class="fa-solid fa-users"></i> Use Users</button>
+        <button type="button" data-action="apply-controlled-walls"><i class="fa-solid fa-door-open"></i> Use Controlled Walls</button>
+      </div>
+    </section>
+    {{/if}}
+
+    {{#if form.isCombat}}
+    <section class="ced-form-section">
+      <header><h4>Combat</h4></header>
+      <div class="ced-grid-two">
+        <label>
+          <span>Combat UUID</span>
+          <input type="text" name="combatUuid" value="{{form.config.combatUuid}}">
+        </label>
+        <label>
+          <span>Combatant IDs</span>
+          <textarea name="combatantIds" rows="2" spellcheck="false">{{form.combatantRefs}}</textarea>
+        </label>
+      </div>
+      <div class="ced-grid-two">
+        <label>
+          <span>Round</span>
+          <input type="number" name="round" min="1" step="1" value="{{form.config.round}}">
+        </label>
+        <label>
+          <span>Turn</span>
+          <input type="number" name="turn" min="0" step="1" value="{{form.config.turn}}">
+        </label>
+      </div>
+    </section>
+    {{/if}}
+
+    {{#if form.isCamera}}
+    <section class="ced-form-section">
+      <header><h4>Camera</h4></header>
+      <div class="ced-grid-two">
+        <label>
+          <span>Audience</span>
+          <select name="scope">
+            {{#each form.cameraScopeOptions}}
+            <option value="{{value}}" {{#if selected}}selected{{/if}}>{{label}}</option>
+            {{/each}}
+          </select>
+        </label>
+        <label>
+          <span>Users</span>
+          <select name="userIds" data-field="picker-users" multiple size="4">
+            {{#each users}}
+            <option value="{{id}}" {{#if selected}}selected{{/if}}>{{name}}{{#if isGM}} (GM){{/if}}</option>
+            {{/each}}
+          </select>
+        </label>
+      </div>
+      <div class="ced-grid-four">
+        <label>
+          <span>X</span>
+          <input type="number" name="x" step="1" value="{{form.config.x}}">
+        </label>
+        <label>
+          <span>Y</span>
+          <input type="number" name="y" step="1" value="{{form.config.y}}">
+        </label>
+        <label>
+          <span>Scale</span>
+          <input type="number" name="scale" min="0.1" max="4" step="0.05" value="{{form.config.scale}}">
+        </label>
+        <label>
+          <span>Duration</span>
+          <input type="number" name="duration" min="0" max="10000" step="100" value="{{form.config.duration}}">
+        </label>
+      </div>
+      <div class="ced-reference-actions">
+        <button type="button" data-action="apply-current-camera"><i class="fa-solid fa-camera"></i> Use Current View</button>
+        <button type="button" data-action="apply-users"><i class="fa-solid fa-users"></i> Use Selected Users</button>
+      </div>
+    </section>
+    {{/if}}
+
+    {{#if form.isPause}}
+    <section class="ced-form-section">
+      <header><h4>Pause State</h4></header>
+      <label>
+        <span>Game Pause</span>
+        <select name="paused">
+          {{#each form.pauseOptions}}
+          <option value="{{value}}" {{#if selected}}selected{{/if}}>{{label}}</option>
+          {{/each}}
+        </select>
+      </label>
+    </section>
+    {{/if}}
+
+    {{#if form.isPlaylist}}
+    <section class="ced-form-section">
+      <header><h4>Native Playlist</h4></header>
+      <div class="ced-grid-two">
+        <label>
+          <span>Playlist</span>
+          <select name="playlistUuid" data-field="picker-playlist">
+            <option value="">Choose Playlist</option>
+            {{#each playlists}}
+            <option value="{{uuid}}" {{#if selected}}selected{{/if}}>{{name}}</option>
+            {{/each}}
+          </select>
+        </label>
+        <label>
+          <span>Operation</span>
+          <select name="operation">
+            {{#each form.playlistOperationOptions}}
+            <option value="{{value}}" {{#if selected}}selected{{/if}}>{{label}}</option>
+            {{/each}}
+          </select>
+        </label>
+      </div>
+      <label>
+        <span>Sound ID</span>
+        <input type="text" name="soundId" value="{{form.config.soundId}}">
+      </label>
+      <div class="ced-reference-actions">
         <button type="button" data-action="apply-playlist"><i class="fa-solid fa-music"></i> Use Playlist</button>
       </div>
-    </div>
+    </section>
+    {{/if}}
+
+    {{#if form.isIntegration}}
+    <section class="ced-form-section">
+      <header><h4>Integration Cue</h4></header>
+      <div class="ced-grid-three">
+        <label>
+          <span>Operation</span>
+          <input type="text" name="operation" value="{{form.config.operation}}">
+        </label>
+        <label>
+          <span>External ID</span>
+          <input type="text" name="externalId" value="{{form.config.externalId}}">
+        </label>
+        <label>
+          <span>Scene ID</span>
+          <input type="text" name="sceneId" value="{{form.config.sceneId}}">
+        </label>
+      </div>
+      <div class="ced-grid-three">
+        <label>
+          <span>Session ID</span>
+          <input type="text" name="sessionId" value="{{form.config.sessionId}}">
+        </label>
+        <label>
+          <span>Beat ID</span>
+          <input type="text" name="beatId" value="{{form.config.beatId}}">
+        </label>
+        <label>
+          <span>Hook Name</span>
+          <input type="text" name="hookName" value="{{form.config.hookName}}">
+        </label>
+      </div>
+      <div class="ced-grid-three">
+        <label>
+          <span>Track ID</span>
+          <input type="text" name="trackId" value="{{form.config.trackId}}">
+        </label>
+        <label>
+          <span>Track Name</span>
+          <input type="text" name="trackName" value="{{form.config.trackName}}">
+        </label>
+        <label>
+          <span>Playlist ID</span>
+          <input type="text" name="playlistId" value="{{form.config.playlistId}}">
+        </label>
+      </div>
+      <div class="ced-grid-three">
+        <label>
+          <span>Playlist Name</span>
+          <input type="text" name="playlistName" value="{{form.config.playlistName}}">
+        </label>
+        <label>
+          <span>Ambience Track ID</span>
+          <input type="text" name="ambienceTrackId" value="{{form.config.ambienceTrackId}}">
+        </label>
+        <label>
+          <span>Preset ID</span>
+          <input type="text" name="presetId" value="{{form.config.presetId}}">
+        </label>
+      </div>
+      <div class="ced-grid-three">
+        <label>
+          <span>Sound ID</span>
+          <input type="text" name="soundId" value="{{form.config.soundId}}">
+        </label>
+        <label>
+          <span>Sound Name</span>
+          <input type="text" name="soundName" value="{{form.config.soundName}}">
+        </label>
+        <label>
+          <span>FXMaster Preset</span>
+          <input type="text" name="preset" value="{{form.config.preset}}">
+        </label>
+      </div>
+      <div class="ced-grid-three">
+        <label>
+          <span>Tag</span>
+          <input type="text" name="tag" value="{{form.config.tag}}">
+        </label>
+        <label>
+          <span>Channel</span>
+          <input type="text" name="channel" value="{{form.config.channel}}">
+        </label>
+        <label>
+          <span>Volume</span>
+          <input type="number" name="volume" min="0" max="1" step="0.05" value="{{form.config.volume}}">
+        </label>
+      </div>
+      <div class="ced-grid-three">
+        <label>
+          <span>Actor UUID</span>
+          <input type="text" name="actorUuid" value="{{form.config.actorUuid}}">
+        </label>
+        <label>
+          <span>Mode</span>
+          <input type="text" name="mode" value="{{form.config.mode}}">
+        </label>
+        <label>
+          <span>Countdown ID</span>
+          <input type="text" name="countdownId" value="{{form.config.countdownId}}">
+        </label>
+      </div>
+      <label>
+        <span>HUD Chat Text</span>
+        <textarea name="chatText" rows="2">{{form.config.chatText}}</textarea>
+      </label>
+      <div class="ced-grid-two">
+        <label>
+          <span>Options JSON</span>
+          <textarea name="optionsJson" rows="5" spellcheck="false">{{form.optionsJson}}</textarea>
+        </label>
+        <label>
+          <span>Args JSON</span>
+          <textarea name="argsJson" rows="5" spellcheck="false">{{form.argsJson}}</textarea>
+        </label>
+      </div>
+      <div class="ced-grid-three">
+        <label>
+          <span>Effects JSON</span>
+          <textarea name="effectsJson" rows="5" spellcheck="false">{{form.effectsJson}}</textarea>
+        </label>
+        <label>
+          <span>Particles JSON</span>
+          <textarea name="particlesJson" rows="5" spellcheck="false">{{form.particlesJson}}</textarea>
+        </label>
+        <label>
+          <span>Filters JSON</span>
+          <textarea name="filtersJson" rows="5" spellcheck="false">{{form.filtersJson}}</textarea>
+        </label>
+      </div>
+      <div class="ced-check-row">
+        <label><input type="checkbox" name="stopAll" {{#if form.config.stopAll}}checked{{/if}}> Stop all</label>
+        <label><input type="checkbox" name="skipFading" {{#if form.config.skipFading}}checked{{/if}}> Skip fading</label>
+        <label><input type="checkbox" name="includeRegionEffects" {{#if form.config.includeRegionEffects}}checked{{/if}}> Include region effects</label>
+        <label><input type="checkbox" name="useGmSpeaker" {{#if form.config.useGmSpeaker}}checked{{/if}}> Use GM speaker</label>
+      </div>
+    </section>
+    {{/if}}
+
+    <details class="ced-advanced-json">
+      <summary><i class="fa-solid fa-code"></i> Advanced JSON</summary>
+      <div class="ced-check-row">
+        <label><input type="checkbox" name="useAdvancedConfig"> Save raw Config JSON instead of form fields</label>
+      </div>
+      <label>
+        <span>Config JSON</span>
+        <textarea name="configJson" rows="10" spellcheck="false">{{configJson}}</textarea>
+      </label>
+      <label>
+        <span>Precondition JSON</span>
+        <textarea name="preconditionJson" rows="5" spellcheck="false">{{preconditionJson}}</textarea>
+      </label>
+    </details>
   </section>
 
-  <label>
-    <span>Declarative Config JSON</span>
-    <textarea name="configJson" rows="12" spellcheck="false">{{configJson}}</textarea>
-  </label>
+  <div class="ced-status-grid">
+    {{#if action.lastValidation}}
+    <section class="ced-editor-status">
+      <strong>Last Validation</strong>
+      <span class="ced-result ced-result-{{action.lastValidation.status}}">{{action.lastValidation.status}}</span>
+      <p>{{action.lastValidation.message}}</p>
+    </section>
+    {{/if}}
 
-  <label>
-    <span>Precondition JSON</span>
-    <textarea name="preconditionJson" rows="5" spellcheck="false">{{preconditionJson}}</textarea>
-  </label>
-
-  {{#if action.lastValidation}}
-  <section class="ced-editor-status">
-    <strong>Last Validation</strong>
-    <span class="ced-result ced-result-{{action.lastValidation.status}}">{{action.lastValidation.status}}</span>
-    <p>{{action.lastValidation.message}}</p>
-  </section>
-  {{/if}}
-
-  {{#if action.lastResult}}
-  <section class="ced-editor-status">
-    <strong>Last Result</strong>
-    <span class="ced-result ced-result-{{action.lastResult.status}}">{{action.lastResult.status}}</span>
-    <p>{{action.lastResult.message}}</p>
-  </section>
-  {{/if}}
+    {{#if action.lastResult}}
+    <section class="ced-editor-status">
+      <strong>Last Result</strong>
+      <span class="ced-result ced-result-{{action.lastResult.status}}">{{action.lastResult.status}}</span>
+      <p>{{action.lastResult.message}}</p>
+    </section>
+    {{/if}}
+  </div>
 </form>
 {{/unless}}

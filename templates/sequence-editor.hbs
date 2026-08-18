@@ -4,11 +4,14 @@
 <div class="ced-editor-layout">
   <form data-form="sequence" class="ced-editor-panel ced-sequence-panel">
     <header>
-      <h2>Sequence <span class="ced-version">v{{moduleVersion}}</span></h2>
+      <div>
+        <h2>Sequence <span class="ced-version">v{{moduleVersion}}</span></h2>
+        <span class="ced-muted">{{activeSceneName}}</span>
+      </div>
       <button type="button" data-action="save-sequence"><i class="fa-solid fa-floppy-disk"></i> Save</button>
     </header>
     <div class="ced-bound-scene">
-      <strong>Scene</strong>
+      <strong>Scene Binding</strong>
       <span>{{activeSceneName}}</span>
       <button type="button" data-action="bind-current-scene"><i class="fa-solid fa-link"></i> Bind Current Scene</button>
     </div>
@@ -36,13 +39,19 @@
 
   <section class="ced-editor-panel ced-beats-panel">
     <header>
-      <h2>Beats</h2>
+      <h2>Beat Cue List</h2>
       <button type="button" data-action="add-beat"><i class="fa-solid fa-plus"></i> Add Beat</button>
     </header>
-    <ol class="ced-edit-list">
-      {{#each beats}}
-      <li class="{{#if selected}}is-selected{{/if}}">
-        <button type="button" data-action="select-beat" data-beat-id="{{id}}">{{index}}. {{name}}</button>
+    <ol class="ced-edit-list ced-beat-edit-list">
+      {{#each beatDisplays}}
+      <li class="{{#if selected}}is-selected{{/if}} ced-state-{{stateClass}}">
+        <button type="button" data-action="select-beat" data-beat-id="{{id}}">
+          <span class="ced-cue-index">{{index}}</span>
+          <span>
+            <strong>{{name}}</strong>
+            <em>{{actionCountLabel}}{{#if hasTriggers}} · {{triggerLabel}}{{/if}}</em>
+          </span>
+        </button>
         <div>
           <button type="button" data-action="move-beat" data-beat-id="{{id}}" data-direction="up" title="Move Beat Up" aria-label="Move Beat Up"><i class="fa-solid fa-arrow-up"></i></button>
           <button type="button" data-action="move-beat" data-beat-id="{{id}}" data-direction="down" title="Move Beat Down" aria-label="Move Beat Down"><i class="fa-solid fa-arrow-down"></i></button>
@@ -58,7 +67,10 @@
   <div class="ced-editor-right">
   <form data-form="beat" class="ced-editor-panel ced-beat-settings-panel">
     <header>
-      <h2>Selected Beat</h2>
+      <div>
+        <h2>Selected Beat</h2>
+        <span class="ced-muted">Cue setup, behavior, and automation</span>
+      </div>
       <button type="button" data-action="save-beat"><i class="fa-solid fa-floppy-disk"></i> Save Beat</button>
     </header>
     <label>
@@ -67,7 +79,7 @@
     </label>
     <label>
       <span>Description</span>
-      <textarea name="description" rows="1">{{selectedBeat.description}}</textarea>
+      <textarea name="description" rows="2">{{selectedBeat.description}}</textarea>
     </label>
     <div class="ced-grid-two">
       <label>
@@ -96,15 +108,140 @@
       <label><input type="checkbox" name="stopPointAfter" {{#if selectedBeat.stopPointAfter}}checked{{/if}}> Stop point after execution</label>
       <label><input type="checkbox" name="continueOnActionFailure" {{#if selectedBeat.continueOnActionFailure}}checked{{/if}}> Continue after failure</label>
     </div>
-    <label class="ced-trigger-json">
-      <span>Triggers JSON</span>
-      <textarea name="triggersJson" rows="4" spellcheck="false">{{triggersJson}}</textarea>
-    </label>
+
+    <section class="ced-trigger-editor" aria-label="Beat Triggers">
+      <header>
+        <div>
+          <h3>Triggers</h3>
+          <span class="ced-muted">Automation attached to this Beat</span>
+        </div>
+      </header>
+      <div class="ced-trigger-tools">
+        <button type="button" data-action="add-enemy-count-trigger"><i class="fa-solid fa-skull-crossbones"></i> Enemy Count</button>
+        <button type="button" data-action="add-hp-threshold-trigger"><i class="fa-solid fa-heart-pulse"></i> HP 50%</button>
+        <button type="button" data-action="add-ally-death-trigger"><i class="fa-solid fa-user-shield"></i> Ally Down</button>
+      </div>
+      {{#if triggerDisplays.length}}
+      <ol class="ced-trigger-list">
+        {{#each triggerDisplays}}
+        <li class="ced-trigger-card ced-status-{{statusClass}}">
+          <header>
+            <strong>Trigger {{index}}</strong>
+            <span>{{eventLabel}}</span>
+          </header>
+          <p>{{summary}}</p>
+          <div class="ced-grid-two">
+            <label>
+              <span>Name</span>
+              <input type="text" name="trigger-{{id}}-name" value="{{name}}">
+            </label>
+            <label>
+              <span>Type</span>
+              <select name="trigger-{{id}}-event">
+                {{#each eventOptions}}
+                <option value="{{value}}" {{#if selected}}selected{{/if}}>{{label}}</option>
+                {{/each}}
+              </select>
+            </label>
+          </div>
+          <div class="ced-grid-three">
+            <label>
+              <span>Result</span>
+              <select name="trigger-{{id}}-action">
+                {{#each actionOptions}}
+                <option value="{{value}}" {{#if selected}}selected{{/if}}>{{label}}</option>
+                {{/each}}
+              </select>
+            </label>
+            <label>
+              <span>Target Beat</span>
+              <select name="trigger-{{id}}-targetBeatId">
+                {{#each targetBeatOptions}}
+                <option value="{{value}}" {{#if selected}}selected{{/if}}>{{label}}</option>
+                {{/each}}
+              </select>
+            </label>
+            <label>
+              <span>Target Sequence</span>
+              <select name="trigger-{{id}}-targetSequenceId">
+                {{#each targetSequenceOptions}}
+                <option value="{{value}}" {{#if selected}}selected{{/if}}>{{label}}</option>
+                {{/each}}
+              </select>
+            </label>
+          </div>
+          <div class="ced-grid-three">
+            <label>
+              <span>Count</span>
+              <input type="number" name="trigger-{{id}}-count" min="1" max="999" value="{{count}}">
+            </label>
+            <label>
+              <span>Round</span>
+              <input type="number" name="trigger-{{id}}-round" min="1" max="999" value="{{round}}">
+            </label>
+            <label>
+              <span>Cooldown ms</span>
+              <input type="number" name="trigger-{{id}}-cooldownMs" min="0" max="3600000" step="1000" value="{{cooldownMs}}">
+            </label>
+          </div>
+          <div class="ced-grid-two">
+            <label>
+              <span>HP Threshold</span>
+              <input type="number" name="trigger-{{id}}-threshold" value="{{threshold}}">
+            </label>
+            <label>
+              <span>HP Mode</span>
+              <select name="trigger-{{id}}-thresholdType">
+                {{#each thresholdTypeOptions}}
+                <option value="{{value}}" {{#if selected}}selected{{/if}}>{{label}}</option>
+                {{/each}}
+              </select>
+            </label>
+          </div>
+          <details>
+            <summary>Watched references</summary>
+            <label>
+              <span>Token UUIDs</span>
+              <textarea name="trigger-{{id}}-tokenUuids" rows="2">{{tokenRefs}}</textarea>
+            </label>
+            <label>
+              <span>Actor UUIDs</span>
+              <textarea name="trigger-{{id}}-actorUuids" rows="2">{{actorRefs}}</textarea>
+            </label>
+            <label>
+              <span>Dispositions</span>
+              <input type="text" name="trigger-{{id}}-dispositions" value="{{dispositionRefs}}">
+            </label>
+          </details>
+          <div class="ced-check-row">
+            <label><input type="checkbox" name="trigger-{{id}}-enabled" {{#if enabled}}checked{{/if}}> Enabled</label>
+            <label><input type="checkbox" name="trigger-{{id}}-once" {{#if once}}checked{{/if}}> Once only</label>
+            <label><input type="checkbox" name="trigger-{{id}}-requiresConfirmation" {{#if requiresConfirmation}}checked{{/if}}> Confirm run</label>
+            <label><input type="checkbox" name="trigger-{{id}}-continueAfterValidationWarnings" {{#if continueAfterValidationWarnings}}checked{{/if}}> Continue after warnings</label>
+          </div>
+        </li>
+        {{/each}}
+      </ol>
+      {{else}}
+      <div class="ced-empty ced-empty-compact">
+        <strong>No Triggers</strong>
+        <p>Add one when a fight state should select or run this Beat.</p>
+      </div>
+      {{/if}}
+      <details class="ced-advanced-json">
+        <summary>Advanced Trigger JSON</summary>
+        <label><input type="checkbox" name="useTriggersJson"> Use this JSON when saving</label>
+        <textarea name="triggersJson" rows="5" spellcheck="false">{{triggersJson}}</textarea>
+      </details>
+    </section>
   </form>
 
   <section class="ced-editor-panel ced-actions-panel">
     <header>
-      <h2>Actions</h2>
+      <div>
+        <h2>Actions</h2>
+        <span class="ced-muted">{{selectedTokenCount}} selected Token(s)</span>
+      </div>
       <div class="ced-add-action">
         <select data-field="new-action-type">
           {{#each actionTypes}}
@@ -116,23 +253,21 @@
     </header>
     <div class="ced-quick-builder" aria-label="Quick encounter builders">
       <div>
-        <strong>Quick Build</strong>
-        <span>{{selectedTokenCount}} selected Token(s)</span>
+        <strong>Quick Builders</strong>
+        <span>Review generated Actions after adding them</span>
       </div>
       <div>
-        <button type="button" data-action="add-combat-setup"><i class="fa-solid fa-swords"></i> Add Combat Setup From Selected Tokens</button>
-        <button type="button" data-action="add-reinforcement-wave"><i class="fa-solid fa-user-plus"></i> Add Reinforcement Wave</button>
-        <button type="button" data-action="add-enemy-count-trigger"><i class="fa-solid fa-skull-crossbones"></i> Add Enemy Count Trigger</button>
-        <button type="button" data-action="add-hp-threshold-trigger"><i class="fa-solid fa-heart-pulse"></i> Add HP 50% Trigger</button>
-        <button type="button" data-action="add-ally-death-trigger"><i class="fa-solid fa-user-shield"></i> Add Ally Death Trigger</button>
+        <button type="button" data-action="add-combat-setup"><i class="fa-solid fa-swords"></i> Combat Setup</button>
+        <button type="button" data-action="add-reinforcement-wave"><i class="fa-solid fa-user-plus"></i> Reinforcement Wave</button>
       </div>
     </div>
     <ol class="ced-edit-list ced-action-edit-list">
-      {{#each actions}}
-      <li>
+      {{#each actionDisplays}}
+      <li class="ced-status-{{statusClass}} {{#if disabled}}is-disabled{{/if}}">
         <div>
-          <strong>{{name}}</strong>
-          <span>{{type}}</span>
+          <strong>{{index}}. {{name}}</strong>
+          <span>{{summary}}</span>
+          <em>{{typeLabel}} · {{modeLabel}}</em>
         </div>
         <div>
           <button type="button" data-action="toggle-action" data-action-id="{{id}}" title="Enable or Disable Action" aria-label="Enable or Disable Action"><i class="fa-solid fa-power-off"></i></button>

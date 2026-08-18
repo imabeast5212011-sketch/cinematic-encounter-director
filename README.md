@@ -1,8 +1,8 @@
 # Cinematic Encounter Director
 
-Version 0.1.17 for Foundry VTT v14.
+Version 0.1.18 for Foundry VTT v14.
 
-Cinematic Encounter Director is a GM-only tactical orchestration module for preparing and running encounters as manually triggered Sequences, Beats, and Actions. It coordinates Foundry-native Scene, Token, light, wall, door, Combat, camera, chat, pause, and optional Playlist actions while leaving cinematic, audio, environmental, HUD, timeline, and session-planning systems in their own modules.
+Cinematic Encounter Director is a GM-only tactical orchestration module for preparing and running encounters as Sequences, Beats, Actions, and optional Triggers. It coordinates Foundry-native Scene, Token, light, wall, door, Combat, camera, chat, pause, and optional Playlist actions while leaving cinematic, audio, environmental, HUD, timeline, and session-planning systems in their own modules.
 
 This module deliberately does not replace SessionFlow, Exalted Scenes, Narrator's Jukebox, FXMaster, COTS Character HUD, Cinematic Combat Timeline, Foundry Scenes, Foundry Combat, Playlists, or D&D 5e mechanics.
 
@@ -42,7 +42,7 @@ No arbitrary JavaScript execution is allowed. Imported JSON is treated as untrus
 
 ## Storage
 
-Version 0.1.17 stores Scene-bound Sequence data in module-owned Scene flags:
+Version 0.1.18 stores Scene-bound Sequence data in module-owned Scene flags:
 
 ```text
 cinematic-encounter-director.sceneSequences
@@ -56,7 +56,7 @@ Schema versioning is enforced. Future schema versions are not silently executed.
 
 Open the Director as a GM, create a Sequence, then open the editor.
 
-Use the editor to:
+Use Plan mode and the Sequence editor to:
 
 - Rename and describe the Sequence.
 - Bind the Sequence to the currently viewed Scene.
@@ -65,7 +65,9 @@ Use the editor to:
 - Build a basic combat setup from currently selected canvas Tokens.
 - Add a reinforcement wave from currently selected canvas Tokens.
 - Add common Beat Triggers from currently selected canvas Tokens.
-- Configure failure policy, execution mode, parallel group, delay, confirmation, and declarative config JSON.
+- Configure common Trigger fields with form controls, with raw Trigger JSON kept as an advanced fallback.
+- Configure common Action fields with form controls, with raw Action config JSON kept as an advanced fallback.
+- Configure failure policy, execution mode, parallel group, delay, confirmation, and preconditions.
 - Validate a Beat before running it.
 
 Token groups are configured by adding multiple Token UUIDs to native Token actions such as reveal/hide, move, elevation, disposition, or add to Combat. Store stable UUIDs rather than display names.
@@ -86,7 +88,12 @@ That shortcut adds Actions to activate the Scene, reveal the selected Tokens, cr
 
 ## Running Encounters
 
-The Director defaults to manual execution.
+The Director has two remembered client-side modes:
+
+- **Run**: table-facing execution controls, selected Beat summary, cue rows, validation, runtime log, and Emergency Stop.
+- **Plan**: quick access to editor, import, export, health, and setup tools.
+
+Execution remains GM-controlled unless a Trigger is explicitly configured to run a Beat or start a Sequence.
 
 GM controls include:
 
@@ -114,7 +121,7 @@ Common editor shortcuts add:
 - Selected Token HP at or below 50 percent.
 - Selected ally/Token defeated.
 
-Trigger JSON is stored on the Beat as an array. Example:
+The editor exposes common Trigger fields directly. Trigger JSON is still stored on the Beat as an array and remains available under Advanced Trigger JSON. Example:
 
 ```json
 [
@@ -253,7 +260,7 @@ The API does not expose unrestricted document mutation.
 - If a lock remains after a disconnect, wait for the stale-lock timeout or reload with a GM client.
 - If imported references are unresolved, open each Action and remap UUIDs or external ids.
 - If native Playlist actions are unavailable, enable the native Playlist fallback world setting.
-- If Foundry appears to keep using an old Director version after update, force a full browser reload. Version 0.1.17 loads the runtime from a versioned folder path so browser module caches cannot reuse older `scripts/main.js` imports.
+- If Foundry appears to keep using an old Director version after update, force a full browser reload. Version 0.1.18 loads the runtime from a versioned folder path so browser module caches cannot reuse older `scripts/main.js` imports.
 
 ## Current Limitations
 
@@ -262,6 +269,6 @@ The API does not expose unrestricted document mutation.
 - FXMaster uses the documented `FXMASTER.api` presets, effects, and scene-effect stop helpers when present.
 - COTS Character HUD uses the confirmed `game.cotsCharacterHud.socket` presentation API when present.
 - The locally inspected Cinematic Combat Timeline version exposes status/open-config API only, not countdown mutation API.
-- The Action editor uses declarative JSON configuration for v0.1.0 rather than a specialized form for every Action type.
-- Remapping imported references is manual in v0.1.0.
+- The Action editor now covers common native and integration fields with form controls. Raw JSON remains available for unusual payloads, imported data, and advanced provider-specific fields.
+- Remapping imported references is manual in v0.1.18.
 - Player camera pan uses the module socket and should be tested carefully on the remote server.

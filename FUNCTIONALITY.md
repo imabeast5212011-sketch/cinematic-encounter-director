@@ -1,6 +1,6 @@
 # Cinematic Encounter Director Functionality
 
-This file is a feature inventory for Cinematic Encounter Director v0.1.17.
+This file is a feature inventory for Cinematic Encounter Director v0.1.18.
 
 ## Purpose
 
@@ -19,6 +19,7 @@ It is meant to sit above Foundry combat and related cinematic modules. It does n
 
 - Open the Director from the Scene controls button.
 - Open the Director through the module API.
+- Switch between Run mode and Plan mode.
 - Create, duplicate, archive, delete, export, and import Sequences.
 - Edit Sequences in a separate Sequence editor.
 - Select Beats from an ordered Beat list.
@@ -32,6 +33,18 @@ It is meant to sit above Foundry combat and related cinematic modules. It does n
 - Roll back the last supported Action.
 - Reset execution state for a Sequence.
 - Clear the execution log.
+
+## User Interface
+
+- Three-zone Director layout: navigation, selected Beat/actions, and context/log.
+- Remembered client-side Run and Plan modes.
+- Compact Beat cue list with order, name, danger, state, Action count, and Trigger count.
+- Selected Beat summary with danger, execution state, Trigger summary, and Action count.
+- Plain-language Action cue rows with provider, type, execution mode, confirmation, delay, rollback, and result state.
+- Collapsible Integration Health panel.
+- Filterable Execution Log.
+- Scroll-contained Director, Sequence editor, and Action editor windows for smaller viewports.
+- Keyboard-visible focus states and reduced-motion CSS support.
 
 ## Sequence Editor
 
@@ -57,6 +70,8 @@ It is meant to sit above Foundry combat and related cinematic modules. It does n
 - Add quick combat setup Actions from selected canvas Tokens.
 - Add reinforcement wave Actions from selected canvas Tokens.
 - Add common automation Triggers from selected canvas Tokens.
+- Edit common Trigger settings with form controls.
+- Use Advanced Trigger JSON when unusual Trigger payloads are needed.
 
 ## Beat Settings
 
@@ -69,7 +84,8 @@ It is meant to sit above Foundry combat and related cinematic modules. It does n
 - Require confirmation.
 - Stop point after execution.
 - Continue after Action failure.
-- Trigger JSON.
+- Structured Trigger controls.
+- Advanced Trigger JSON fallback.
 - Manual execution state.
 
 ## Action System
@@ -84,6 +100,8 @@ Each Action can have:
 - Enabled state.
 - Adapter/provider.
 - Config JSON.
+- Structured config form for common native and integration fields.
+- Advanced Config JSON fallback for unusual provider payloads.
 - Execution mode.
 - Parallel group.
 - Failure policy.
@@ -121,6 +139,7 @@ Each Action can have:
 - Keeps log entries in module-owned Scene flags.
 - Has configurable retention.
 - Can be cleared by the GM.
+- Can be filtered by all, success, warning, failure, Trigger, and rollback entries.
 
 ## Rollback
 
@@ -380,6 +399,7 @@ Client settings include:
 - Director window position.
 - Director window size.
 - Compact mode.
+- Director mode.
 - Show integration health.
 - Show advanced Action details.
 - Reduced animation.
@@ -402,6 +422,6 @@ Client settings include:
 - Live Foundry runtime testing is still required after installation.
 - Integration support depends on the public APIs exposed by the installed versions of other modules.
 - Cinematic Combat Timeline currently appears config/status-only from the inspected API.
-- The Action editor uses declarative JSON rather than a specialized form for every Action type.
+- The Action editor covers common fields with forms, but unusual or future provider-specific payloads may still need Advanced JSON.
 - Imported references may need manual remapping.
 - Player camera pan should be tested carefully on the remote server.
