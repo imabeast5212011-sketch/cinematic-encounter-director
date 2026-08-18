@@ -1,6 +1,6 @@
 # Cinematic Encounter Director Functionality
 
-This file is a feature inventory for Cinematic Encounter Director v0.1.18.
+This file is a feature inventory for Cinematic Encounter Director v0.1.19.
 
 ## Purpose
 

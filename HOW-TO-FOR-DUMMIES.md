@@ -18,10 +18,10 @@ Use it like a cue board:
 4. Open your world as a GM.
 5. Open the Scene you want to run.
 
-For v0.1.18, the module should load this runtime:
+For v0.1.19, the module should load this runtime:
 
 ```text
-scripts/runtime-0.1.18/main.js
+scripts/runtime-0.1.19/main.js
 ```
 
 If Foundry still shows an older version, do a full browser reload and restart Foundry if needed.
@@ -346,7 +346,7 @@ The UI still shows an old version:
 
 - Do a full browser reload.
 - Restart Foundry if needed.
-- Confirm the module manifest points at `scripts/runtime-0.1.18/main.js`.
+- Confirm the module manifest points at `scripts/runtime-0.1.19/main.js`.
 
 ## Best Habits
 

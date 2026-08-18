@@ -16,7 +16,7 @@ Run these tests on the remote Foundry VTT v14 server with the D&D 5e system. Rec
 
 ## Director UI
 
-- Confirm the module reports version 0.1.18.
+- Confirm the module reports version 0.1.19.
 - Confirm the Director shows Run and Plan mode tabs.
 - Switch to Plan mode, close the Director, reopen it, and confirm the client remembers Plan mode.
 - Switch back to Run mode and confirm the selected Beat controls are visible.
