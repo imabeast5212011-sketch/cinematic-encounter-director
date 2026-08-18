@@ -1,20 +1,20 @@
 import { INTEGRATION_TARGETS, PROVIDERS } from "../constants.js";
-import { BaseAdapter } from "./base-adapter.js";
+import { PublicApiActionAdapter } from "./public-api-action-adapter.js";
 
-export class SessionFlowAdapter extends BaseAdapter {
-  constructor() {
-    super(INTEGRATION_TARGETS.sessionflow);
+const METHOD_CANDIDATES = {
+  "sessionflow.trigger": {
+    trigger: ["trigger", "run", "execute", "play", "broadcast", "broadcastScene", "openScene"],
+    default: ["trigger", "run", "execute", "broadcast"]
+  },
+  "sessionflow.open": {
+    open: ["open", "openGMPanel", "openPanel", "openWorkspace", "openSession", "openScene", "show", "focus"],
+    default: ["open", "openGMPanel", "openPanel", "openWorkspace"]
   }
+};
 
-  getUnsupportedCapabilities(api, bridge) {
-    const unsupported = super.getUnsupportedCapabilities(api, bridge);
-    if (!bridge) {
-      unsupported.push(
-        "SessionFlow trigger/open content API was not confirmed from local source.",
-        "Expected bridge methods: getCapabilities, validateAction, executeAction, optional rollbackAction."
-      );
-    }
-    return unsupported;
+export class SessionFlowAdapter extends PublicApiActionAdapter {
+  constructor() {
+    super(INTEGRATION_TARGETS.sessionflow, METHOD_CANDIDATES);
   }
 
   minimizeExecutionContext(context) {

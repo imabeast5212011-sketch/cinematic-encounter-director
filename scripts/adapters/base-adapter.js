@@ -8,7 +8,11 @@ function normalizeText(value) {
 
 function publicKeyNames(object) {
   try {
-    return Object.keys(object ?? {});
+    if (!object || typeof object !== "object") return [];
+    const own = Object.keys(object);
+    const proto = Object.getPrototypeOf(object);
+    const protoKeys = proto && proto !== Object.prototype ? Object.getOwnPropertyNames(proto) : [];
+    return [...new Set([...own, ...protoKeys])].filter((key) => key !== "constructor");
   } catch (_error) {
     return [];
   }

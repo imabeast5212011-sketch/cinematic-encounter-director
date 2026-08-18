@@ -6,39 +6,39 @@ No proprietary third-party source code or assets were copied into Cinematic Enco
 
 ## SessionFlow
 
-- Confirmed module id: not available from local non-C sources.
-- Detected version: not available from local non-C sources.
-- Public API entry point: not confirmed.
-- Methods or hooks used: none unless the module exposes `game.modules.get(moduleId).api.cinematicEncounterDirector` or `api.encounterDirector`.
-- Confirmed capabilities: none.
+- Confirmed module id: `sessionflow`.
+- Detected live version: `1.0.2`.
+- Public API entry point: `game.modules.get("sessionflow").api`.
+- Methods or hooks used: explicit public method calls configured through Action `config.method`, plus known method-name candidates for trigger/open style calls.
+- Confirmed capabilities: public API method discovery and guarded method calls.
 - Desired capabilities: trigger supported widgets or broadcasts, reference existing content, open or focus GM content where public API supports it.
-- Unsupported in this build without API documentation: all SessionFlow Actions.
+- Unsupported in this build without API documentation: private canvas state, private widget stores, or DOM manipulation.
 - Runtime assumptions: module id candidate `sessionflow`; title search for `SessionFlow`.
-- Required live tests: detect installed id/version, confirm active state, confirm bridge or documented API, validate external references, trigger each supported content type, handle inactive or deleted content.
+- Required live tests: detect installed id/version, inspect Integration Health Public API method list, set `config.method` and `config.args` or `callStyle` as needed, trigger each supported content type, handle inactive or deleted content.
 
 ## Exalted Scenes
 
-- Confirmed module id: not available from local non-C sources.
-- Detected version: not available from local non-C sources.
-- Public API entry point: not confirmed.
-- Methods or hooks used: none unless the module exposes `game.modules.get(moduleId).api.cinematicEncounterDirector` or `api.encounterDirector`.
-- Confirmed capabilities: none.
+- Confirmed module id: `exalted-scenes`.
+- Detected live version: `7.0.7`.
+- Public API entry point: `game.modules.get("exalted-scenes").api`.
+- Methods or hooks used: explicit public method calls configured through Action `config.method`, plus known method-name candidates for broadcast/stop/open calls.
+- Confirmed capabilities: public API method discovery and guarded method calls.
 - Desired capabilities: broadcast existing presentation, present existing cast or character configuration, trigger existing sequence or slideshow, stop Director-triggered presentation where supported.
-- Unsupported in this build without API documentation: all Exalted Scenes Actions.
+- Unsupported in this build without API documentation: private scene stores, private broadcast state, DOM manipulation, or private flags.
 - Runtime assumptions: module id candidate `exalted-scenes`; title search for `Exalted Scenes`.
-- Required live tests: detect installed id/version, enumerate content if public API supports it, broadcast and stop known content, verify no private flags or UI control are used.
+- Required live tests: detect installed id/version, inspect Integration Health Public API method list, set `config.method` and `config.args` or `callStyle` as needed, broadcast and stop known content, verify no private flags or UI control are used.
 
 ## Narrator's Jukebox
 
-- Confirmed module id: not available from local non-C sources.
-- Detected version: not available from local non-C sources.
-- Public API entry point: not confirmed.
-- Methods or hooks used: none unless the module exposes `game.modules.get(moduleId).api.cinematicEncounterDirector` or `api.encounterDirector`.
-- Confirmed capabilities: none.
+- Confirmed module id: `narrator-jukebox`.
+- Detected live version: `5.0.2`.
+- Public API entry point: `game.modules.get("narrator-jukebox").api`.
+- Methods or hooks used: explicit public method calls configured through Action `config.method`, plus known method-name candidates for music, ambience, and soundboard calls.
+- Confirmed capabilities: public API method discovery and guarded method calls.
 - Desired capabilities: play music, stop music, fade or transition, start or stop ambience presets or layers, play soundboard cue, stop Director-started loop.
-- Unsupported in this build without API documentation: all Narrator's Jukebox Actions.
-- Runtime assumptions: module id candidates `narrators-jukebox` and `narrators_jukebox`; title search for `Narrator's Jukebox`.
-- Required live tests: detect installed id/version, verify public API, play and stop each supported content kind, confirm Emergency Stop affects only Director-owned audio.
+- Unsupported in this build without API documentation: private audio stores, private sockets, or translating Jukebox references into native Foundry Playlists.
+- Runtime assumptions: module id candidates `narrator-jukebox`, `narrators-jukebox`, and `narrators_jukebox`; title search for `Narrator's Jukebox`.
+- Required live tests: detect installed id/version, inspect Integration Health Public API method list, set `config.method` and `config.args` or `callStyle` as needed, play and stop each supported content kind, confirm Emergency Stop affects only Director-owned audio.
 
 ## Gambit's FXMaster
 
