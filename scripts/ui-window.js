@@ -20,7 +20,7 @@ function viewportSize() {
   };
 }
 
-export function keepApplicationWindowScrollable(app, { minWidth = 420, minHeight = 320 } = {}) {
+export function keepApplicationWindowScrollable(app, { minWidth = 420, minHeight = 320, fillWidth = false, fillHeight = false } = {}) {
   const element = appWindowElement(app);
   const rendered = appElement(app);
   if (!element) return;
@@ -39,8 +39,8 @@ export function keepApplicationWindowScrollable(app, { minWidth = 420, minHeight
     const fitWidth = Math.max(minWidth, viewport.width - left - margin);
     const currentHeight = Number.parseFloat(element.style.height) || rect.height || fitHeight;
     const currentWidth = Number.parseFloat(element.style.width) || rect.width || fitWidth;
-    const nextHeight = Math.min(currentHeight, fitHeight);
-    const nextWidth = Math.min(currentWidth, fitWidth);
+    const nextHeight = fillHeight ? fitHeight : Math.min(currentHeight, fitHeight);
+    const nextWidth = fillWidth ? fitWidth : Math.min(currentWidth, fitWidth);
 
     try {
       app.setPosition?.({

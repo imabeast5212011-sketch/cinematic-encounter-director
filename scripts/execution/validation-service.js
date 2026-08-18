@@ -29,10 +29,16 @@ export class ValidationService {
     return this.getAllActionTypes().map((action) => {
       const status = statuses.find((entry) => entry.providerId === action.provider);
       const nativeReady = action.provider === PROVIDERS.FOUNDRY;
+      const automated = nativeReady
+        || status?.status === "Ready"
+        || (action.id === "combat-timeline.openConfig" && status?.capabilities?.includes("openCountdownConfig"));
+      const manualCue = !automated && Boolean(status?.installed && status?.active && status?.status !== "Disabled by setting");
       return {
         ...action,
-        providerStatus: nativeReady ? "Ready" : status?.status ?? "Missing",
-        available: nativeReady || status?.status === "Ready" || (action.id === "combat-timeline.openConfig" && status?.capabilities?.includes("openCountdownConfig"))
+        providerStatus: nativeReady ? "Ready" : manualCue ? `${status.status} / manual cue` : status?.status ?? "Missing",
+        automated,
+        manualCue,
+        available: automated || manualCue
       };
     });
   }

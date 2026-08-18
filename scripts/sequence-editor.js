@@ -98,7 +98,7 @@ export class SequenceEditor extends HandlebarsApplicationMixin(ApplicationV2) {
 
   _onRender(context, options) {
     super._onRender(context, options);
-    keepApplicationWindowScrollable(this, { minWidth: 420, minHeight: 360 });
+    keepApplicationWindowScrollable(this, { minWidth: 760, minHeight: 420, fillWidth: true, fillHeight: true });
     const element = appElement(this);
     if (!element) return;
     element.querySelectorAll("[data-action]").forEach((control) => {

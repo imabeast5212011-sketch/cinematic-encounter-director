@@ -47,7 +47,12 @@ export class CombatTimelineAdapter extends BaseAdapter {
       return createResult(RESULT_STATUS.SUCCESS, "Timeline openCountdownConfig API is available.", { status });
     }
     if (action.type === "combat-timeline.countdown") {
-      return createResult(RESULT_STATUS.UNSUPPORTED, "Countdown mutation API was not exposed by the inspected Cinematic Combat Timeline version.");
+      const status = await this.getStatus();
+      return createResult(
+        RESULT_STATUS.WARNING,
+        "Manual cue only: countdown mutation API was not exposed by the inspected Cinematic Combat Timeline version.",
+        { status, manualCue: true }
+      );
     }
     return super.validate(action);
   }
@@ -64,7 +69,12 @@ export class CombatTimelineAdapter extends BaseAdapter {
       return createResult(RESULT_STATUS.SUCCESS, "Opened Cinematic Combat Timeline countdown configuration.");
     }
     if (action.type === "combat-timeline.countdown") {
-      return createResult(RESULT_STATUS.UNSUPPORTED, "Countdown mutation requires a future confirmed public Timeline API.");
+      const status = await this.getStatus();
+      return createResult(
+        RESULT_STATUS.SKIPPED,
+        "Manual cue: adjust the Combat Timeline countdown manually; no confirmed mutation API is available.",
+        { status, manualCue: true }
+      );
     }
     return super.execute(action, context);
   }

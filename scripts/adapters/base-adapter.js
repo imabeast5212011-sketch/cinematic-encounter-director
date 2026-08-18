@@ -160,6 +160,14 @@ export class BaseAdapter {
     return bridge ? [] : ["No confirmed Encounter Director bridge API detected."];
   }
 
+  manualCueResult(action, status) {
+    return createResult(
+      RESULT_STATUS.WARNING,
+      `Manual cue only: ${this.displayName} is ${status.status}; run "${action.name}" yourself during this Beat.`,
+      { status, manualCue: true }
+    );
+  }
+
   async validate(action) {
     const status = await this.getStatus();
     if (status.status === "Disabled by setting") {
@@ -167,10 +175,10 @@ export class BaseAdapter {
     }
     if (!status.installed) return createResult(RESULT_STATUS.UNSUPPORTED, `${this.displayName} is not installed or could not be detected.`, { status });
     if (!status.active) return createResult(RESULT_STATUS.UNSUPPORTED, `${this.displayName} is installed but inactive.`, { status });
-    if (!status.apiDetected) return createResult(RESULT_STATUS.UNSUPPORTED, `${this.displayName} does not expose a public API object.`, { status });
+    if (!status.apiDetected) return this.manualCueResult(action, status);
     const module = this.detectModule();
     const bridge = this.getDirectorBridge(this.getPublicApi(module));
-    if (!bridge) return createResult(RESULT_STATUS.UNSUPPORTED, `${this.displayName} has no confirmed Encounter Director bridge API.`, { status });
+    if (!bridge) return this.manualCueResult(action, status);
     if (typeof bridge.validateAction === "function") {
       try {
         const result = await bridge.validateAction({ providerId: this.providerId, action });
@@ -186,6 +194,13 @@ export class BaseAdapter {
   async execute(action, context) {
     const status = await this.getStatus();
     if (status.status !== "Ready") {
+      if (status.installed && status.active && status.status !== "Disabled by setting") {
+        return createResult(
+          RESULT_STATUS.SKIPPED,
+          `Manual cue: ${this.displayName} cannot be automated yet; GM should run "${action.name}" manually.`,
+          { status, manualCue: true }
+        );
+      }
       return createResult(RESULT_STATUS.UNSUPPORTED, `${this.displayName} action is unavailable: ${status.status}.`, { status });
     }
     const module = this.detectModule();
