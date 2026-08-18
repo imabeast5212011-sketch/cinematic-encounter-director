@@ -111,9 +111,10 @@ Run these tests on the remote Foundry VTT v14 server with the D&D 5e system. Rec
 
 ## COTS Character HUD
 
-- Detect public API if exposed.
+- Detect `game.cotsCharacterHud`.
 - Trigger supported presentation.
 - Stop supported presentation.
+- Fall back to configured GM speaker or selected Token actor when an Action has no Actor UUID.
 - Fail safely if no public API exists.
 - Confirm no DOM manipulation.
 

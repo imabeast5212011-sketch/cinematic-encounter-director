@@ -1,6 +1,6 @@
 # Cinematic Encounter Director
 
-Version 0.1.7 for Foundry VTT v14.
+Version 0.1.8 for Foundry VTT v14.
 
 Cinematic Encounter Director is a GM-only tactical orchestration module for preparing and running encounters as manually triggered Sequences, Beats, and Actions. It coordinates Foundry-native Scene, Token, light, wall, door, Combat, camera, chat, pause, and optional Playlist actions while leaving cinematic, audio, environmental, HUD, timeline, and session-planning systems in their own modules.
 
@@ -40,7 +40,7 @@ No arbitrary JavaScript execution is allowed. Imported JSON is treated as untrus
 
 ## Storage
 
-Version 0.1.7 stores Scene-bound Sequence data in module-owned Scene flags:
+Version 0.1.8 stores Scene-bound Sequence data in module-owned Scene flags:
 
 ```text
 cinematic-encounter-director.sceneSequences
@@ -225,7 +225,9 @@ The API does not expose unrestricted document mutation.
 ## Current Limitations
 
 - Static verification only; no local or remote Foundry runtime testing was performed.
-- SessionFlow, Exalted Scenes, Narrator's Jukebox, FXMaster, and COTS Character HUD adapters require confirmed public APIs at runtime.
+- SessionFlow, Exalted Scenes, and Narrator's Jukebox adapters require confirmed public APIs at runtime.
+- FXMaster uses the documented `FXMASTER.api` presets, effects, and scene-effect stop helpers when present.
+- COTS Character HUD uses the confirmed `game.cotsCharacterHud.socket` presentation API when present.
 - The locally inspected Cinematic Combat Timeline version exposes status/open-config API only, not countdown mutation API.
 - The Action editor uses declarative JSON configuration for v0.1.0 rather than a specialized form for every Action type.
 - Remapping imported references is manual in v0.1.0.

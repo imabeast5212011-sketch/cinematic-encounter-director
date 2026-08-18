@@ -71,7 +71,7 @@ export const INTEGRATION_ACTION_TYPES = Object.freeze([
     label: "Play FXMaster preset",
     description: "Triggers an existing FXMaster preset through a confirmed public API.",
     dangerLevel: DANGER_LEVELS.CHANGES_SCENE,
-    defaultConfig: { externalId: "", operation: "playPreset" }
+    defaultConfig: { preset: "", operation: "playPreset", options: {} }
   },
   {
     id: "fxmaster.effect",
@@ -79,7 +79,7 @@ export const INTEGRATION_ACTION_TYPES = Object.freeze([
     label: "Start or stop FXMaster effect",
     description: "Starts or stops an existing Director-owned FXMaster particle or filter through a confirmed public API.",
     dangerLevel: DANGER_LEVELS.CHANGES_SCENE,
-    defaultConfig: { externalId: "", operation: "startEffect" }
+    defaultConfig: { operation: "startEffect", effects: [], particles: [], filters: [], skipFading: true }
   },
   {
     id: "fxmaster.clearDirectorEffects",
@@ -87,7 +87,7 @@ export const INTEGRATION_ACTION_TYPES = Object.freeze([
     label: "Clear Director-owned FXMaster effects",
     description: "Clears effects previously started by the Director where the public API supports owner handles.",
     dangerLevel: DANGER_LEVELS.CHANGES_SCENE,
-    defaultConfig: { operation: "clearDirectorEffects" }
+    defaultConfig: { operation: "clearDirectorEffects", skipFading: true }
   },
   {
     id: "fxmaster.clearAll",
@@ -95,7 +95,7 @@ export const INTEGRATION_ACTION_TYPES = Object.freeze([
     label: "Dangerous: clear all FXMaster effects",
     description: "A separately labeled dangerous action requiring explicit API support and GM confirmation.",
     dangerLevel: DANGER_LEVELS.DISRUPTIVE,
-    defaultConfig: { operation: "clearAll" }
+    defaultConfig: { operation: "clearAll", skipFading: true, includeRegionEffects: false }
   },
   {
     id: "character-hud.present",
@@ -103,7 +103,7 @@ export const INTEGRATION_ACTION_TYPES = Object.freeze([
     label: "Trigger COTS Character HUD presentation",
     description: "Requires a confirmed Character HUD public API.",
     dangerLevel: DANGER_LEVELS.SAFE,
-    defaultConfig: { externalId: "", operation: "present" }
+    defaultConfig: { actorUuid: "", operation: "present", mode: "gm", chatText: "", useGmSpeaker: true }
   },
   {
     id: "character-hud.stop",
@@ -111,7 +111,7 @@ export const INTEGRATION_ACTION_TYPES = Object.freeze([
     label: "Stop COTS Character HUD presentation",
     description: "Stops a Director-triggered HUD presentation where supported.",
     dangerLevel: DANGER_LEVELS.SAFE,
-    defaultConfig: { externalId: "", operation: "stop" }
+    defaultConfig: { operation: "stop" }
   },
   {
     id: "combat-timeline.openConfig",

@@ -42,27 +42,27 @@ No proprietary third-party source code or assets were copied into Cinematic Enco
 
 ## Gambit's FXMaster
 
-- Confirmed module id: not available from local non-C sources.
-- Detected version: not available from local non-C sources.
-- Public API entry point: not confirmed.
-- Methods or hooks used: none unless the module exposes `game.modules.get(moduleId).api.cinematicEncounterDirector` or `api.encounterDirector`.
-- Confirmed capabilities: none.
+- Confirmed module id: `fxmaster`.
+- Detected version: `8.3.5` from local manifest and live world inventory.
+- Public API entry point: `FXMASTER.api`.
+- Methods or hooks used: `FXMASTER.api.presets.play()`, `stop()`, `toggle()`, `switch()`, `FXMASTER.api.effects.play()`, `stop()`, `toggle()`, `FXMASTER.api.stopSceneEffects()`, and optional `stopRegionEffects()`.
+- Confirmed capabilities: preset play, stop, toggle, switch, effect play, stop, toggle, stop scene effects, optional stop region effects.
 - Desired capabilities: play existing preset, start and stop particle effect, start and stop filter effect, clear Director-owned effects, dangerous clear-all through separate confirmation.
-- Unsupported in this build without API documentation: all FXMaster Actions.
+- Unsupported in this build without API documentation: direct manipulation of FXMaster private flags or UI state.
 - Runtime assumptions: module id candidate `fxmaster`; title search for `FXMaster`.
-- Required live tests: detect installed id/version, verify public API, start and stop Director-owned effects, test layers, verify clear-all requires explicit confirmation.
+- Required live tests: detect installed id/version, verify public API, trigger a preset, start and stop Director-owned effects, test layers, verify clear-all requires explicit confirmation.
 
 ## COTS Character HUD
 
-- Confirmed module id: not available from local non-C sources.
-- Detected version: not available from local non-C sources.
-- Public API entry point: not confirmed.
-- Methods or hooks used: none unless the module exposes `game.modules.get(moduleId).api.cinematicEncounterDirector` or `api.encounterDirector`.
-- Confirmed capabilities: none.
+- Confirmed module id: `cots-character-hud`.
+- Detected local version: `0.1.10`.
+- Public API entry point: `game.cotsCharacterHud`.
+- Methods or hooks used: `game.cotsCharacterHud.socket.emitStart()` and `emitStopAll()`.
+- Confirmed capabilities: present Actor through the HUD speaker system, stop all HUD presentations, open GM speaker picker when present.
 - Desired capabilities: trigger supported speaker or cinematic presentation, stop Director-triggered presentation where supported.
-- Unsupported in this build without API documentation: all Character HUD Actions.
+- Unsupported in this build without API documentation: DOM manipulation, overlay private flags, or non-public presentation state.
 - Runtime assumptions: module id candidates `cots-character-hud` and `cots-character-hud-v2`; title search for `COTS Character HUD`.
-- Required live tests: detect installed id/version, verify public API, trigger and stop a supported presentation, confirm no DOM or private flag manipulation.
+- Required live tests: detect installed id/version, verify `game.cotsCharacterHud`, trigger and stop a supported presentation, confirm no DOM or private flag manipulation.
 
 ## Cinematic Combat Timeline
 
