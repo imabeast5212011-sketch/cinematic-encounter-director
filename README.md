@@ -1,8 +1,8 @@
 # Cinematic Encounter Director
 
-Version 0.1.20 for Foundry VTT v14.
+Version 0.1.21 for Foundry VTT v14.
 
-Cinematic Encounter Director is a GM-only tactical orchestration module for preparing and running encounters as Sequences, Beats, Actions, and optional Triggers. It coordinates Foundry-native Scene, Token, light, wall, door, Combat, camera, chat, pause, and optional Playlist actions while leaving cinematic, audio, environmental, HUD, timeline, and session-planning systems in their own modules.
+Cinematic Encounter Director is a GM-only tactical orchestration module for preparing and running encounters as Sequences, Beats, Actions, and optional Triggers. It coordinates Foundry-native Scene, Token, light, wall, door, Combat, camera, chat, item, Journal handout, roll-request, pause, and optional Playlist actions while leaving cinematic, audio, environmental, HUD, timeline, and session-planning systems in their own modules.
 
 This module deliberately does not replace SessionFlow, Exalted Scenes, Narrator's Jukebox, FXMaster, COTS Character HUD, Cinematic Combat Timeline, Foundry Scenes, Foundry Combat, Playlists, or D&D 5e mechanics.
 
@@ -42,7 +42,7 @@ No arbitrary JavaScript execution is allowed. Imported JSON is treated as untrus
 
 ## Storage
 
-Version 0.1.20 stores Scene-bound Sequence data in module-owned Scene flags:
+Version 0.1.21 stores Scene-bound Sequence data in module-owned Scene flags:
 
 ```text
 cinematic-encounter-director.sceneSequences
@@ -185,8 +185,15 @@ Implemented Foundry-native Actions:
 - Pan GM, selected users, or active players through a module socket request.
 - Pause or unpause the game.
 - Optional native Playlist cue when the world setting enables Playlist fallback.
+- Give an Item to configured Actors or Token actors after GM confirmation.
+- Remove or reduce an Item from configured Actors or Token actors after GM confirmation.
+- Create a Journal handout after GM confirmation.
+- Show an existing Journal handout after GM confirmation.
+- Request a player roll in chat.
 
 Native document mutation resolves UUIDs, checks document type, uses allowlisted fields, and updates only intended fields.
+
+Item and Journal actions are marked as confirmation-required even when authored through imported JSON or an MCP bridge.
 
 Narrator's Jukebox remains the preferred audio integration. Native Playlist actions are separate and never translate Jukebox references.
 
@@ -203,8 +210,10 @@ Rollback is conservative. Supported native rollback snapshots include:
 - Token disposition.
 - Director-created Combatants from add-to-Combat actions.
 - Director-started native Playlist cues where the native stop API is available.
+- Actor Item grants, removals, and quantity changes.
+- Director-created Journal handouts.
 
-Rollback is not offered for Scene activation, Combat start/end, Combat round/turn changes, ChatMessages, Pause state, external integrations without confirmed rollback APIs, or any target whose rollback snapshot is no longer safe to apply.
+Rollback is not offered for Scene activation, Combat start/end, Combat round/turn changes, ChatMessages, roll requests, showing existing Journal handouts, Pause state, external integrations without confirmed rollback APIs, or any target whose rollback snapshot is no longer safe to apply.
 
 Emergency Stop cancels Director work; it does not claim to undo completed mutations.
 
@@ -269,7 +278,7 @@ The import API validates JSON through the same untrusted-data path used by the U
 - If a lock remains after a disconnect, wait for the stale-lock timeout or reload with a GM client.
 - If imported references are unresolved, open each Action and remap UUIDs or external ids.
 - If native Playlist actions are unavailable, enable the native Playlist fallback world setting.
-- If Foundry appears to keep using an old Director version after update, force a full browser reload. Version 0.1.20 loads the runtime from a versioned folder path so browser module caches cannot reuse older `scripts/main.js` imports.
+- If Foundry appears to keep using an old Director version after update, force a full browser reload. Version 0.1.21 loads the runtime from a versioned folder path so browser module caches cannot reuse older `scripts/main.js` imports.
 
 ## Current Limitations
 
@@ -279,5 +288,5 @@ The import API validates JSON through the same untrusted-data path used by the U
 - COTS Character HUD uses the confirmed `game.cotsCharacterHud.socket` presentation API when present.
 - The locally inspected Cinematic Combat Timeline version exposes status/open-config API only, not countdown mutation API.
 - The Action editor now covers common native and integration fields with form controls. Raw JSON remains available for unusual payloads, imported data, and advanced provider-specific fields.
-- Remapping imported references is manual in v0.1.20.
+- Remapping imported references is manual in v0.1.21.
 - Player camera pan uses the module socket and should be tested carefully on the remote server.

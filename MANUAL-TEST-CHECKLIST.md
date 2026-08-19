@@ -16,7 +16,7 @@ Run these tests on the remote Foundry VTT v14 server with the D&D 5e system. Rec
 
 ## Director UI
 
-- Confirm the module reports version 0.1.20.
+- Confirm the module reports version 0.1.21.
 - Confirm the Director shows Run and Plan mode tabs.
 - Switch to Plan mode, close the Director, reopen it, and confirm the client remembers Plan mode.
 - Switch back to Run mode and confirm the selected Beat controls are visible.
@@ -78,6 +78,13 @@ Run these tests on the remote Foundry VTT v14 server with the D&D 5e system. Rec
 - Pan all active players.
 - Pause and unpause game.
 - Use native Playlist fallback only after enabling its setting.
+- Give an Item to an Actor with GM confirmation.
+- Give an Item to a selected Token actor using the structured form helper.
+- Stack a granted Item quantity when a matching Actor Item exists.
+- Remove or reduce an Actor Item with GM confirmation.
+- Create a Journal handout with GM confirmation.
+- Show an existing Journal handout with GM confirmation.
+- Request a player roll in chat, public and whispered.
 - Configure common native Actions through the structured Action form.
 - Use Advanced Config JSON for an unusual native payload and confirm it persists.
 - Test missing and deleted targets.
@@ -190,6 +197,8 @@ Run these tests on the remote Foundry VTT v14 server with the D&D 5e system. Rec
 - Roll back light state.
 - Roll back door state.
 - Stop Director-started native Playlist cue if used.
+- Roll back Actor Item grants, removals, and quantity changes.
+- Roll back a Director-created Journal handout.
 - Stop Director-started audio through integration API if available.
 - Stop Director-started FX through integration API if available.
 - Attempt rollback after manual GM change.

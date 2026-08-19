@@ -346,6 +346,140 @@
     </section>
     {{/if}}
 
+    {{#if form.isItem}}
+    <section class="ced-form-section">
+      <header><h4>Actor Items</h4></header>
+      <label>
+        <span>Actor or Token UUIDs</span>
+        <textarea name="actorUuids" rows="3" spellcheck="false">{{form.actorRefs}}</textarea>
+      </label>
+      <div class="ced-reference-actions">
+        <button type="button" data-action="apply-controlled-actors"><i class="fa-solid fa-user-group"></i> Use Controlled Tokens</button>
+      </div>
+      <div class="ced-grid-three">
+        <label>
+          <span>Item UUID</span>
+          <input type="text" name="itemUuid" value="{{form.config.itemUuid}}">
+        </label>
+        <label>
+          <span>Quantity</span>
+          <input type="number" name="quantity" min="1" step="1" value="{{form.config.quantity}}">
+        </label>
+        {{#if form.isRemoveItem}}
+        <label>
+          <span>Item ID</span>
+          <input type="text" name="itemId" value="{{form.config.itemId}}">
+        </label>
+        {{/if}}
+      </div>
+      {{#if form.isRemoveItem}}
+      <label>
+        <span>Item Name</span>
+        <input type="text" name="itemName" value="{{form.config.itemName}}">
+      </label>
+      <div class="ced-check-row">
+        <label><input type="checkbox" name="removeAll" {{#if form.config.removeAll}}checked{{/if}}> Remove all copies / whole Item</label>
+      </div>
+      {{/if}}
+      {{#if form.isGiveItem}}
+      <label>
+        <span>Fallback Item Data JSON</span>
+        <textarea name="itemDataJson" rows="5" spellcheck="false">{{form.itemDataJson}}</textarea>
+      </label>
+      <div class="ced-check-row">
+        <label><input type="checkbox" name="stack" {{#if form.config.stack}}checked{{/if}}> Stack with matching Actor Item</label>
+      </div>
+      {{/if}}
+    </section>
+    {{/if}}
+
+    {{#if form.isJournal}}
+    <section class="ced-form-section">
+      <header><h4>Journal Handout</h4></header>
+      {{#if form.isCreateJournal}}
+      <div class="ced-grid-three">
+        <label>
+          <span>Journal Name</span>
+          <input type="text" name="journalName" value="{{form.config.name}}" maxlength="120">
+        </label>
+        <label>
+          <span>Page Name</span>
+          <input type="text" name="pageName" value="{{form.config.pageName}}" maxlength="120">
+        </label>
+        <label>
+          <span>Player Access</span>
+          <select name="ownershipLevel">
+            {{#each form.ownershipLevelOptions}}
+            <option value="{{value}}" {{#if selected}}selected{{/if}}>{{label}}</option>
+            {{/each}}
+          </select>
+        </label>
+      </div>
+      <label>
+        <span>Handout Content</span>
+        <textarea name="journalContent" rows="8">{{form.config.content}}</textarea>
+      </label>
+      {{else}}
+      <div class="ced-grid-two">
+        <label>
+          <span>Journal or Page UUID</span>
+          <input type="text" name="journalUuid" value="{{form.config.journalUuid}}">
+        </label>
+        <label>
+          <span>Page ID</span>
+          <input type="text" name="pageId" value="{{form.config.pageId}}">
+        </label>
+      </div>
+      {{/if}}
+      <div class="ced-check-row">
+        <label><input type="checkbox" name="showToPlayers" {{#if form.config.showToPlayers}}checked{{/if}}> Show to players</label>
+        {{#if form.isShowJournal}}
+        <label><input type="checkbox" name="createChatLinkFallback" {{#if form.config.createChatLinkFallback}}checked{{/if}}> Post chat link if show is unavailable</label>
+        {{/if}}
+      </div>
+    </section>
+    {{/if}}
+
+    {{#if form.isRollRequest}}
+    <section class="ced-form-section">
+      <header><h4>Roll Request</h4></header>
+      <label>
+        <span>Prompt</span>
+        <textarea name="rollPrompt" rows="3">{{form.config.prompt}}</textarea>
+      </label>
+      <div class="ced-grid-three">
+        <label>
+          <span>Formula</span>
+          <input type="text" name="formula" value="{{form.config.formula}}">
+        </label>
+        <label>
+          <span>DC</span>
+          <input type="text" name="dc" value="{{form.config.dc}}">
+        </label>
+        <label>
+          <span>Roll Type</span>
+          <input type="text" name="rollType" value="{{form.config.rollType}}">
+        </label>
+      </div>
+      <div class="ced-grid-two">
+        <label>
+          <span>Actor or Token UUIDs</span>
+          <textarea name="actorUuids" rows="3" spellcheck="false">{{form.actorRefs}}</textarea>
+        </label>
+        <label>
+          <span>User IDs</span>
+          <textarea name="userIds" rows="3" spellcheck="false">{{form.userRefs}}</textarea>
+        </label>
+      </div>
+      <div class="ced-reference-actions">
+        <button type="button" data-action="apply-controlled-actors"><i class="fa-solid fa-user-group"></i> Use Controlled Tokens</button>
+      </div>
+      <div class="ced-check-row">
+        <label><input type="checkbox" name="whisper" {{#if form.config.whisper}}checked{{/if}}> Whisper to listed users or active players</label>
+      </div>
+    </section>
+    {{/if}}
+
     {{#if form.isIntegration}}
     <section class="ced-form-section">
       <header><h4>Integration Cue</h4></header>

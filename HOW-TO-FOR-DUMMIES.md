@@ -18,10 +18,10 @@ Use it like a cue board:
 4. Open your world as a GM.
 5. Open the Scene you want to run.
 
-For v0.1.20, the module should load this runtime:
+For v0.1.21, the module should load this runtime:
 
 ```text
-scripts/runtime-0.1.20/main.js
+scripts/runtime-0.1.21/main.js
 ```
 
 If Foundry still shows an older version, do a full browser reload and restart Foundry if needed.
@@ -133,6 +133,30 @@ Good Action names:
 - `Set darkness to 80 percent`
 
 Avoid names like `Action 4` or `stuff happens`.
+
+## Give Items, Show Handouts, Ask For Rolls
+
+These are normal Actions now.
+
+Item Actions:
+
+- Use **Give Item to Actor** to add or stack an Item on one or more Actors.
+- Use **Remove Item from Actor** to reduce quantity or remove the Item.
+- Put Actor UUIDs or selected Token UUIDs in the Actor field.
+- Put an Item UUID in the Item field.
+- These Actions always ask the GM before they change inventory.
+
+Journal Actions:
+
+- Use **Create Journal handout** to make a new handout.
+- Use **Show Journal handout** to show an existing JournalEntry or page.
+- These Actions always ask the GM before they create or show handouts.
+
+Roll Request:
+
+- Use **Request player roll** to post a roll prompt to chat.
+- Add a formula like `1d20`, a DC, and optional Actor or user references.
+- This asks players to roll; it does not force their character sheet to roll.
 
 ## Good Beat Structure
 
@@ -369,7 +393,7 @@ The UI still shows an old version:
 
 - Do a full browser reload.
 - Restart Foundry if needed.
-- Confirm the module manifest points at `scripts/runtime-0.1.20/main.js`.
+- Confirm the module manifest points at `scripts/runtime-0.1.21/main.js`.
 
 ## Best Habits
 

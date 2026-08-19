@@ -1,6 +1,6 @@
 # Cinematic Encounter Director Functionality
 
-This file is a feature inventory for Cinematic Encounter Director v0.1.20.
+This file is a feature inventory for Cinematic Encounter Director v0.1.21.
 
 ## Purpose
 
@@ -157,6 +157,8 @@ Supported rollback snapshots include:
 - Token disposition.
 - Director-created Combatants from add-to-Combat Actions.
 - Director-started native Playlist cues where Foundry exposes a stop API.
+- Actor Item grants, removals, and quantity changes.
+- Director-created Journal handouts.
 
 Rollback is not claimed for:
 
@@ -164,6 +166,8 @@ Rollback is not claimed for:
 - Combat start/end.
 - Combat round/turn changes.
 - Chat messages.
+- Roll-request chat messages.
+- Showing existing Journal handouts.
 - Pause state.
 - External integrations without confirmed rollback APIs.
 - Targets that no longer exist or are no longer safe to modify.
@@ -257,6 +261,13 @@ Implemented native Action families include:
 - Pan GM, selected users, or active players by module socket.
 - Pause or unpause the game.
 - Optional native Playlist cue when enabled in world settings.
+- Give Items to Actors or Token actors with GM confirmation.
+- Remove or reduce Actor Items with GM confirmation.
+- Create Journal handouts with GM confirmation.
+- Show existing Journal handouts with GM confirmation.
+- Request player rolls in chat.
+
+Item and Journal mutations remain confirmation-required even when authored by imported JSON or an MCP bridge.
 
 ## Quick Combat Builders
 

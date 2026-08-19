@@ -191,6 +191,77 @@ HP threshold trigger:
 }
 ```
 
+## Item, Handout, And Roll Examples
+
+Give an Item to Actors or selected Token actors. This action remains GM-confirmed at execution time:
+
+```json
+{
+  "id": "action-give-silver-key",
+  "type": "native.giveItemToActor",
+  "adapter": "foundry-native",
+  "name": "Give Silver Key",
+  "enabled": true,
+  "config": {
+    "actorUuids": [],
+    "itemUuid": "",
+    "quantity": 1,
+    "stack": true
+  },
+  "order": 0,
+  "executionMode": "sequential",
+  "failurePolicy": "stop",
+  "requiresConfirmation": true
+}
+```
+
+Create a Journal handout. This action remains GM-confirmed at execution time:
+
+```json
+{
+  "id": "action-create-letter-handout",
+  "type": "native.createJournalHandout",
+  "adapter": "foundry-native",
+  "name": "Create Cult Letter handout",
+  "enabled": true,
+  "config": {
+    "name": "Cult Letter",
+    "pageName": "Letter",
+    "content": "<p>The letter bears a broken black seal.</p>",
+    "ownershipLevel": "observer",
+    "showToPlayers": false
+  },
+  "order": 1,
+  "executionMode": "sequential",
+  "failurePolicy": "stop",
+  "requiresConfirmation": true
+}
+```
+
+Request a roll in chat. This asks; it does not force a player sheet to roll:
+
+```json
+{
+  "id": "action-request-arcana",
+  "type": "native.requestRoll",
+  "adapter": "foundry-native",
+  "name": "Request Arcana check",
+  "enabled": true,
+  "config": {
+    "prompt": "The symbols pulse with old magic. Roll Arcana.",
+    "formula": "1d20",
+    "dc": "15",
+    "rollType": "Arcana",
+    "actorUuids": [],
+    "userIds": [],
+    "whisper": false
+  },
+  "order": 2,
+  "executionMode": "sequential",
+  "failurePolicy": "stop"
+}
+```
+
 ## Custom MCP Provider Pattern
 
 A Foundry-side bridge can register its own provider and action type:
