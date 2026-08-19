@@ -16,7 +16,7 @@ Run these tests on the remote Foundry VTT v14 server with the D&D 5e system. Rec
 
 ## Director UI
 
-- Confirm the module reports version 0.1.19.
+- Confirm the module reports version 0.1.20.
 - Confirm the Director shows Run and Plan mode tabs.
 - Switch to Plan mode, close the Director, reopen it, and confirm the client remembers Plan mode.
 - Switch back to Run mode and confirm the selected Beat controls are visible.
@@ -209,6 +209,16 @@ Run these tests on the remote Foundry VTT v14 server with the D&D 5e system. Rec
 - Confirm no presentation broadcasts.
 - Confirm no FX starts.
 - Confirm no countdown changes.
+
+## AI And MCP JSON API
+
+- From a GM console, call `game.modules.get("cinematic-encounter-director").api.getJsonSchema()` and confirm it returns schema version 1.
+- Call `getEncounterAuthoringContext()` and confirm it includes action types, trigger events, forbidden fields, and an example package.
+- Export the current Scene with `exportEncounterJson()` and confirm the package contains `moduleId`, `schemaVersion`, and `sequences`.
+- Validate an exported package with `validateEncounterJson(packageObject)` and confirm it does not save a duplicate.
+- Import that package with `importEncounterJson(packageObject, { mode: "duplicate" })` and confirm it creates a duplicate Sequence.
+- Use `upsertSequence(sequenceObject, { replace: true })` on a test Sequence and confirm the matching id is replaced rather than duplicated.
+- Confirm non-GM users cannot import, upsert, execute, or read the live authoring context.
 
 ## Permissions And Privacy
 

@@ -1,6 +1,6 @@
 # Cinematic Encounter Director Functionality
 
-This file is a feature inventory for Cinematic Encounter Director v0.1.19.
+This file is a feature inventory for Cinematic Encounter Director v0.1.20.
 
 ## Purpose
 
@@ -340,6 +340,10 @@ Cinematic Combat Timeline:
 - Export one Sequence.
 - Export all Sequences on the current Scene.
 - Import Director JSON.
+- Expose an AI/MCP authoring context with schema, action catalog, trigger enums, limits, and example JSON.
+- Validate encounter JSON through the public API without saving.
+- Import encounter JSON through the public API.
+- Create or replace a single Sequence through the public API.
 - Duplicate imported Sequences by default.
 - Preserve reference metadata.
 - Reject unsupported future schema versions.
@@ -358,6 +362,13 @@ const api = game.modules.get("cinematic-encounter-director").api;
 Available API methods:
 
 - `openDirector(options)`.
+- `getJsonSchema()`.
+- `getEncounterAuthoringContext()`.
+- `readActionTypeCatalog()`.
+- `exportEncounterJson(options)`.
+- `validateEncounterJson(input)`.
+- `importEncounterJson(input, options)`.
+- `upsertSequence(sequence, options)`.
 - `registerActionProvider(provider)`.
 - `registerActionType(actionType)`.
 - `validateActionConfig(action, context)`.

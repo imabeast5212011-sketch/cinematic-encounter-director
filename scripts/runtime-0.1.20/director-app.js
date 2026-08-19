@@ -1,0 +1,493 @@
+import { HOOKS, MODULE_ID, MODULE_TITLE, MODULE_VERSION, RESULT_STATUS, SETTINGS, TEMPLATE_PATHS } from "./constants.js";
+import { getSetting } from "./settings.js";
+import { createResult } from "./state/schema.js";
+import { SequenceEditor } from "./sequence-editor.js";
+import { keepApplicationWindowScrollable, releaseApplicationWindowScrollable } from "./ui-window.js";
+import {
+  decorateAction,
+  decorateBeat,
+  decorateLog,
+  decorateSequence,
+  healthSummary,
+  statusClass
+} from "./ui-presenters.js";
+
+const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api;
+
+function appElement(app) {
+  return app.element instanceof HTMLElement ? app.element : app.element?.[0] ?? null;
+}
+
+function notify(result) {
+  const message = result?.message ?? String(result ?? "");
+  if (result?.status === RESULT_STATUS.FAILURE) ui.notifications?.error(message);
+  else if ([RESULT_STATUS.WARNING, RESULT_STATUS.UNSUPPORTED, RESULT_STATUS.CANCELLED].includes(result?.status)) ui.notifications?.warn(message);
+  else ui.notifications?.info(message);
+}
+
+function orderedBeats(sequence) {
+  const byId = new Map((sequence?.beats ?? []).map((beat) => [beat.id, beat]));
+  const ordered = (sequence?.beatIds ?? []).map((id) => byId.get(id)).filter(Boolean);
+  const missing = (sequence?.beats ?? []).filter((beat) => !(sequence?.beatIds ?? []).includes(beat.id));
+  return [...ordered, ...missing];
+}
+
+async function confirmText(title, content) {
+  if (globalThis.Dialog?.confirm) {
+    return Dialog.confirm({
+      title,
+      content: `<p>${foundry.utils.escapeHTML(content)}</p>`,
+      defaultYes: false
+    });
+  }
+  return globalThis.confirm?.(`${title}\n\n${content}`) ?? false;
+}
+
+async function confirmHtml(title, content, { yes = "Continue", no = "Cancel" } = {}) {
+  if (globalThis.Dialog?.confirm) {
+    return Dialog.confirm({
+      title,
+      content,
+      yes: () => true,
+      no: () => false,
+      defaultYes: false,
+      buttons: {
+        yes: { icon: "<i class='fa-solid fa-check'></i>", label: yes, callback: () => true },
+        no: { icon: "<i class='fa-solid fa-xmark'></i>", label: no, callback: () => false }
+      }
+    });
+  }
+  const text = String(content ?? "").replace(/<[^>]*>/g, " ").replace(/\s+/g, " ").trim();
+  return globalThis.confirm?.(`${title}\n\n${text}`) ?? false;
+}
+
+function escapeHtml(value) {
+  return globalThis.foundry?.utils?.escapeHTML?.(String(value ?? "")) ?? String(value ?? "");
+}
+
+function modeTabs(activeMode) {
+  return [
+    { id: "run", label: "Run", icon: "fa-solid fa-play", active: activeMode === "run" },
+    { id: "plan", label: "Plan", icon: "fa-solid fa-compass-drafting", active: activeMode === "plan" }
+  ];
+}
+
+function logFilterTabs(activeFilter) {
+  return [
+    { id: "all", label: "All", active: activeFilter === "all" },
+    { id: "success", label: "Success", active: activeFilter === "success" },
+    { id: "warning", label: "Warning", active: activeFilter === "warning" },
+    { id: "failure", label: "Failure", active: activeFilter === "failure" },
+    { id: "trigger", label: "Trigger", active: activeFilter === "trigger" },
+    { id: "rolledback", label: "Rollback", active: activeFilter === "rolledback" }
+  ];
+}
+
+function filterLogs(logs, filter) {
+  if (!filter || filter === "all") return logs;
+  if (filter === "failure") return logs.filter((entry) => ["failure", "cancelled"].includes(entry.statusClass));
+  if (filter === "rolledback") return logs.filter((entry) => ["rolledback", "rolled-back"].includes(entry.statusClass));
+  return logs.filter((entry) => entry.statusClass === filter || entry.filterType === filter);
+}
+
+function actionDangerCount(actions) {
+  return actions.filter((action) => ["changes-scene", "changes-combat", "disruptive"].includes(action.dangerClass)).length;
+}
+
+function runBeatConfirmationContent({ sequence, beat, actions, preview }) {
+  const dangerous = actionDangerCount(actions);
+  const warnings = preview?.results?.filter?.((entry) => ["failure", "unsupported", "warning"].includes(String(entry.result?.status).toLocaleLowerCase())) ?? [];
+  const actionRows = actions.slice(0, 8).map((action) => `<li><strong>${escapeHtml(action.name)}</strong><span>${escapeHtml(action.summary)}</span></li>`).join("");
+  return `
+    <div class="ced-confirm">
+      <p><strong>${escapeHtml(beat?.name ?? "Selected Beat")}</strong> in ${escapeHtml(sequence?.name ?? "this Sequence")}</p>
+      <dl>
+        <dt>Enabled Actions</dt><dd>${actions.filter((action) => action.enabled !== false).length}</dd>
+        <dt>Dangerous Actions</dt><dd>${dangerous}</dd>
+        <dt>Triggers</dt><dd>${beat?.triggerCount ?? beat?.triggers?.length ?? 0}</dd>
+        <dt>Validation</dt><dd>${escapeHtml(preview?.message ?? "Not checked")}</dd>
+      </dl>
+      ${warnings.length ? `<p class="ced-error-text">${warnings.length} validation issue(s) need attention.</p>` : ""}
+      ${actionRows ? `<ol>${actionRows}</ol>` : "<p>No enabled Actions are configured.</p>"}
+    </div>
+  `;
+}
+
+export class DirectorApplication extends HandlebarsApplicationMixin(ApplicationV2) {
+  static DEFAULT_OPTIONS = {
+    id: `${MODULE_ID}-director`,
+    classes: [MODULE_ID, "ced-director"],
+    tag: "section",
+    window: {
+      title: MODULE_TITLE,
+      icon: "fa-solid fa-clapperboard",
+      resizable: true
+    },
+    position: {
+      width: 900,
+      height: 700
+    }
+  };
+
+  static PARTS = {
+    main: {
+      template: TEMPLATE_PATHS.DIRECTOR
+    }
+  };
+
+  constructor(services, options = {}) {
+    super(options);
+    this.services = services;
+    this.selectedSequenceId = options.selectedSequenceId ?? "";
+    this.selectedBeatId = options.selectedBeatId ?? "";
+    this.preview = null;
+    this.mode = options.mode ?? getSetting(SETTINGS.DIRECTOR_MODE) ?? "run";
+    this.logFilter = "all";
+    this._triggerHandler = (payload) => this.handleTriggerFired(payload);
+    Hooks.on(HOOKS.TRIGGER_FIRED, this._triggerHandler);
+  }
+
+  async _prepareContext(options) {
+    const context = await super._prepareContext(options);
+    const scene = this.services.store.getActiveScene();
+    const isGM = Boolean(game.user?.isGM);
+    const sequences = isGM ? await this.services.store.listSequences(scene, { includeArchived: true }) : [];
+    if (!this.selectedSequenceId && sequences.length) this.selectedSequenceId = sequences.find((sequence) => !sequence.archived)?.id ?? sequences[0].id;
+    const selectedSequence = sequences.find((sequence) => sequence.id === this.selectedSequenceId) ?? null;
+    const beats = orderedBeats(selectedSequence);
+    if (!this.selectedBeatId && beats.length) this.selectedBeatId = selectedSequence.startingBeatId || beats[0].id;
+    const selectedBeat = beats.find((beat) => beat.id === this.selectedBeatId) ?? beats[0] ?? null;
+    const actions = selectedBeat ? this.services.validation.getOrderedActions(selectedBeat) : [];
+    const actionDisplays = actions.map((action, index) => decorateAction(action, index, this.services.validation.getActionMetadata(action.type)));
+    const decoratedBeats = beats.map((beat, index) => {
+      const beatActions = this.services.validation.getOrderedActions(beat);
+      const decoratedActions = beatActions.map((action, actionIndex) => decorateAction(action, actionIndex, this.services.validation.getActionMetadata(action.type)));
+      return {
+        ...decorateBeat(beat, index, decoratedActions, sequences),
+        selected: beat.id === selectedBeat?.id
+      };
+    });
+    const selectedBeatDisplay = decoratedBeats.find((beat) => beat.id === selectedBeat?.id) ?? null;
+    const statuses = (await this.services.validation.getIntegrationStatuses()).map((status) => ({
+      ...status,
+      statusClass: statusClass(status.status),
+      capabilitiesText: status.capabilities?.join(", ") || "None",
+      apiSourceText: status.apiSource || "",
+      apiMethodsText: status.apiMethods?.join(", ") || "",
+      unsupportedText: status.unsupported?.join(" ") || ""
+    }));
+    const health = healthSummary(statuses);
+    const allLogs = (await this.services.log.list(scene)).slice().reverse().map((entry) => decorateLog(entry));
+    const logs = filterLogs(allLogs, this.logFilter).slice(0, 80);
+
+    return {
+      ...context,
+      isGM,
+      moduleVersion: MODULE_VERSION,
+      mode: this.mode,
+      isRunMode: this.mode === "run",
+      isPlanMode: this.mode === "plan",
+      modeTabs: modeTabs(this.mode),
+      logFilter: this.logFilter,
+      logFilters: logFilterTabs(this.logFilter),
+      enabled: getSetting(SETTINGS.ENABLED),
+      compactMode: getSetting(SETTINGS.COMPACT_MODE),
+      showIntegrationHealth: getSetting(SETTINGS.SHOW_INTEGRATION_HEALTH),
+      showAdvancedActionDetails: getSetting(SETTINGS.SHOW_ADVANCED_ACTION_DETAILS),
+      activeSceneName: scene?.name ?? "No active Scene",
+      sequences: sequences.map((sequence) => decorateSequence(sequence, this.selectedSequenceId)),
+      selectedSequence,
+      selectedSequenceDisplay: selectedSequence ? decorateSequence(selectedSequence, this.selectedSequenceId) : null,
+      beats: beats.map((beat, index) => ({ ...beat, index: index + 1, selected: beat.id === selectedBeat?.id })),
+      beatDisplays: decoratedBeats,
+      selectedBeat,
+      selectedBeatDisplay,
+      actions,
+      actionDisplays,
+      statuses,
+      health,
+      logs,
+      allLogCount: allLogs.length,
+      preview: this.preview,
+      hasSequence: Boolean(selectedSequence),
+      hasBeat: Boolean(selectedBeat)
+    };
+  }
+
+  _onRender(context, options) {
+    super._onRender(context, options);
+    keepApplicationWindowScrollable(this, { minWidth: 420, minHeight: 360 });
+    const element = appElement(this);
+    if (!element) return;
+    element.querySelector("[data-field='sequence-select']")?.addEventListener("change", (event) => {
+      this.selectedSequenceId = event.currentTarget.value;
+      this.selectedBeatId = "";
+      this.render({ force: true });
+    });
+    element.querySelectorAll("[data-action]").forEach((button) => {
+      button.addEventListener("click", (event) => {
+        event.preventDefault();
+        void this.handleAction(event.currentTarget.dataset);
+      });
+    });
+    element.querySelector("[data-field='import-file']")?.addEventListener("change", (event) => {
+      const file = event.currentTarget.files?.[0];
+      event.currentTarget.value = "";
+      if (file) void this.importFile(file);
+    });
+  }
+
+  async handleAction(dataset) {
+    if (!game.user?.isGM) return;
+    try {
+      switch (dataset.action) {
+        case "set-mode":
+          return this.setMode(dataset.mode);
+        case "set-log-filter":
+          this.logFilter = dataset.filter ?? "all";
+          return this.render({ force: true });
+        case "create-sequence":
+          return this.createSequence();
+        case "edit-sequence":
+          return this.openSequenceEditor();
+        case "duplicate-sequence":
+          return this.duplicateSequence();
+        case "archive-sequence":
+          return this.archiveSequence();
+        case "delete-sequence":
+          return this.deleteSequence();
+        case "export-sequence":
+          return this.exportSequence();
+        case "export-scene":
+          return this.exportScene();
+        case "select-beat":
+          this.selectedBeatId = dataset.beatId;
+          return this.render({ force: true });
+        case "previous-beat":
+          return this.selectRelativeBeat(-1);
+        case "next-beat":
+          return this.selectRelativeBeat(1);
+        case "validate-beat":
+          return this.validateBeat();
+        case "run-beat":
+          return this.runBeat();
+        case "run-action":
+          return this.runAction(dataset.actionId);
+        case "retry-action":
+          return this.runAction(dataset.actionId, { retry: true });
+        case "skip-action":
+          return this.skipAction(dataset.actionId);
+        case "stop-beat":
+          return this.stopBeat();
+        case "emergency-stop":
+          return this.emergencyStop();
+        case "rollback-last":
+          return this.rollbackLast();
+        case "reset-state":
+          return this.resetExecutionState();
+        case "clear-log":
+          await this.services.log.clear();
+          return this.render({ force: true });
+        case "open-import":
+          appElement(this)?.querySelector("[data-field='import-file']")?.click();
+          return;
+        default:
+          return;
+      }
+    } catch (error) {
+      notify(createResult(RESULT_STATUS.FAILURE, error?.message ?? String(error)));
+      this.render({ force: true });
+    }
+  }
+
+  async createSequence() {
+    const sequence = await this.services.store.createSequence();
+    this.selectedSequenceId = sequence.id;
+    this.selectedBeatId = "";
+    this.openSequenceEditor();
+    this.render({ force: true });
+  }
+
+  async setMode(mode) {
+    this.mode = mode === "plan" ? "plan" : "run";
+    await game.settings?.set?.(MODULE_ID, SETTINGS.DIRECTOR_MODE, this.mode);
+    this.render({ force: true });
+  }
+
+  openSequenceEditor() {
+    if (!this.selectedSequenceId) return;
+    new SequenceEditor(this.services, {
+      selectedSequenceId: this.selectedSequenceId,
+      selectedBeatId: this.selectedBeatId,
+      onClose: () => this.render({ force: true })
+    }).render({ force: true });
+  }
+
+  async duplicateSequence() {
+    if (!this.selectedSequenceId) return;
+    const copy = await this.services.store.duplicateSequence(this.selectedSequenceId);
+    this.selectedSequenceId = copy.id;
+    this.selectedBeatId = copy.beatIds[0] ?? "";
+    this.render({ force: true });
+  }
+
+  async archiveSequence() {
+    if (!this.selectedSequenceId) return;
+    if (!(await confirmText("Archive Sequence", "Archive this Sequence without deleting it?"))) return;
+    await this.services.store.archiveSequence(this.selectedSequenceId);
+    this.render({ force: true });
+  }
+
+  async deleteSequence() {
+    if (!this.selectedSequenceId) return;
+    if (!(await confirmText("Delete Sequence", "Delete this Sequence from the Scene flags? This cannot be undone."))) return;
+    await this.services.store.deleteSequence(this.selectedSequenceId);
+    this.selectedSequenceId = "";
+    this.selectedBeatId = "";
+    this.render({ force: true });
+  }
+
+  async exportSequence() {
+    if (!this.selectedSequenceId) return;
+    const payload = await this.services.importExport.buildSequencePackage(this.selectedSequenceId);
+    await this.services.importExport.downloadPackage(payload, `${MODULE_ID}-sequence.json`);
+  }
+
+  async exportScene() {
+    const payload = await this.services.importExport.buildScenePackage();
+    await this.services.importExport.downloadPackage(payload, `${MODULE_ID}-scene-sequences.json`);
+  }
+
+  async importFile(file) {
+    const text = await this.services.importExport.readFile(file);
+    const result = await this.services.importExport.importText(text, { mode: "duplicate" });
+    notify(createResult(RESULT_STATUS.SUCCESS, `Imported ${result.imported.length} Sequence(s).`));
+    this.selectedSequenceId = result.imported[0]?.id ?? this.selectedSequenceId;
+    this.selectedBeatId = result.imported[0]?.beatIds?.[0] ?? this.selectedBeatId;
+    this.render({ force: true });
+  }
+
+  async selectRelativeBeat(delta) {
+    const sequence = await this.services.store.getSequence(this.selectedSequenceId);
+    const beats = orderedBeats(sequence);
+    if (!beats.length) return;
+    const current = Math.max(0, beats.findIndex((beat) => beat.id === this.selectedBeatId));
+    const next = Math.min(beats.length - 1, Math.max(0, current + delta));
+    this.selectedBeatId = beats[next].id;
+    this.render({ force: true });
+  }
+
+  async validateBeat() {
+    if (!this.selectedSequenceId || !this.selectedBeatId) return;
+    this.preview = await this.services.controller.dryRunBeat(this.selectedSequenceId, this.selectedBeatId);
+    notify(createResult(this.preview.status, this.preview.message));
+    this.render({ force: true });
+  }
+
+  async runBeat() {
+    if (!this.selectedSequenceId || !this.selectedBeatId) return;
+    const preview = await this.services.controller.dryRunBeat(this.selectedSequenceId, this.selectedBeatId);
+    const sequence = await this.services.store.getSequence(this.selectedSequenceId);
+    const beat = orderedBeats(sequence).find((entry) => entry.id === this.selectedBeatId);
+    const actions = this.services.validation.getOrderedActions(beat)
+      .filter((action) => action.enabled)
+      .map((action, index) => decorateAction(action, index, this.services.validation.getActionMetadata(action.type)));
+    const shouldConfirm = getSetting(SETTINGS.CONFIRM_BEFORE_RUN_BEAT) || preview.status !== RESULT_STATUS.SUCCESS;
+    if (shouldConfirm) {
+      const ok = await confirmHtml("Run Beat", runBeatConfirmationContent({
+        sequence,
+        beat: decorateBeat(beat, 0, actions),
+        actions,
+        preview
+      }), { yes: "Run Beat", no: "Cancel" });
+      if (!ok) {
+        this.preview = preview;
+        this.render({ force: true });
+        return;
+      }
+    }
+    if (preview.status !== RESULT_STATUS.SUCCESS) {
+      this.preview = preview;
+    }
+    const result = await this.services.controller.runBeat(this.selectedSequenceId, this.selectedBeatId, {
+      continueAfterValidationWarnings: true
+    });
+    notify(result);
+    if (result.status === RESULT_STATUS.SUCCESS && getSetting(SETTINGS.AUTO_SELECT_NEXT_BEAT)) await this.selectRelativeBeat(1);
+    else this.render({ force: true });
+  }
+
+  async runAction(actionId) {
+    if (!this.selectedSequenceId || !this.selectedBeatId || !actionId) return;
+    const result = await this.services.controller.runAction(this.selectedSequenceId, this.selectedBeatId, actionId);
+    notify(result);
+    this.render({ force: true });
+  }
+
+  async skipAction(actionId) {
+    const result = createResult(RESULT_STATUS.SKIPPED, "Action skipped by GM.");
+    await this.services.store.recordActionResult(this.selectedSequenceId, this.selectedBeatId, actionId, result);
+    notify(result);
+    this.render({ force: true });
+  }
+
+  async stopBeat() {
+    const result = await this.services.controller.stopRunningBeat(this.selectedSequenceId, this.selectedBeatId);
+    notify(result);
+    this.render({ force: true });
+  }
+
+  async emergencyStop() {
+    const ok = await confirmHtml("Emergency Stop", `
+      <div class="ced-confirm">
+        <p><strong>Emergency Stop cancels active Director timers and asks supported adapters to stop Director-owned work.</strong></p>
+        <p>It does not promise to undo completed Scene, Token, Combat, chat, or third-party changes. Use rollback separately when a rollback snapshot exists.</p>
+      </div>
+    `, { yes: "Emergency Stop", no: "Cancel" });
+    if (!ok) return;
+    const result = await this.services.controller.emergencyStop();
+    notify(result);
+    this.render({ force: true });
+  }
+
+  async rollbackLast() {
+    if (!(await confirmText("Roll Back Last Supported Action", "Apply the most recent unused rollback snapshot?"))) return;
+    const result = await this.services.rollback.rollbackLast();
+    notify(result);
+    this.render({ force: true });
+  }
+
+  async resetExecutionState() {
+    if (!(await confirmText("Reset Execution State", "Clear stored validation and execution results for the selected Sequence?"))) return;
+    const sequence = await this.services.store.getSequence(this.selectedSequenceId);
+    for (const beat of orderedBeats(sequence)) {
+      for (const action of this.services.validation.getOrderedActions(beat)) {
+        await this.services.store.updateAction(sequence.id, beat.id, action.id, {
+          lastValidation: null,
+          lastResult: null,
+          rollbackSnapshotRef: ""
+        });
+      }
+      await this.services.store.updateBeat(sequence.id, beat.id, { manualState: "notRun" });
+    }
+    await this.services.trigger?.resetStateForSequence?.(sequence.id);
+    notify(createResult(RESULT_STATUS.SUCCESS, "Execution state reset."));
+    this.render({ force: true });
+  }
+
+  handleTriggerFired(payload) {
+    const scene = this.services.store.getActiveScene();
+    if (payload?.sceneUuid && scene?.uuid && payload.sceneUuid !== scene.uuid) return;
+    if (payload?.sequenceId) this.selectedSequenceId = payload.sequenceId;
+    if (payload?.beatId) this.selectedBeatId = payload.beatId;
+    this.preview = null;
+    this.render({ force: true });
+  }
+
+  async close(options) {
+    if (this._triggerHandler) Hooks.off(HOOKS.TRIGGER_FIRED, this._triggerHandler);
+    this._triggerHandler = null;
+    releaseApplicationWindowScrollable(this);
+    await super.close(options);
+  }
+}

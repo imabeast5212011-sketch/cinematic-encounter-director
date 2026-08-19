@@ -1,0 +1,164 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/imabeast5212011-sketch/cinematic-encounter-director/schemas/encounter-package.schema.json",
+  "title": "Cinematic Encounter Director Encounter Package",
+  "type": "object",
+  "additionalProperties": true,
+  "required": ["moduleId", "schemaVersion", "sequences"],
+  "properties": {
+    "moduleId": { "type": "string", "const": "cinematic-encounter-director" },
+    "schemaVersion": { "type": "integer", "const": 1 },
+    "exportedAt": { "type": "string" },
+    "scope": { "type": "string", "enum": ["single-sequence", "scene-sequences", "ai-generated"] },
+    "sequences": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "#/$defs/sequence" }
+    },
+    "referenceMetadata": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": true,
+        "properties": {
+          "sequenceId": { "type": "string" },
+          "path": { "type": "string" },
+          "value": { "type": "string" }
+        }
+      }
+    }
+  },
+  "$defs": {
+    "sequence": {
+      "type": "object",
+      "additionalProperties": true,
+      "required": ["id", "name", "beatIds", "beats"],
+      "properties": {
+        "id": { "type": "string", "minLength": 1, "maxLength": 80 },
+        "schemaVersion": { "type": "integer", "const": 1 },
+        "name": { "type": "string", "minLength": 1, "maxLength": 120 },
+        "description": { "type": "string", "maxLength": 5000 },
+        "sceneUuid": { "type": "string", "maxLength": 160 },
+        "startingBeatId": { "type": "string", "maxLength": 80 },
+        "beatIds": {
+          "type": "array",
+          "items": { "type": "string", "maxLength": 80 }
+        },
+        "beats": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/beat" }
+        },
+        "version": { "type": "integer", "minimum": 1, "maximum": 999999 },
+        "tags": {
+          "type": "array",
+          "maxItems": 25,
+          "items": { "type": "string", "maxLength": 40 }
+        },
+        "gmNotes": { "type": "string", "maxLength": 5000 },
+        "enabled": { "type": "boolean", "default": true },
+        "archived": { "type": "boolean", "default": false }
+      }
+    },
+    "beat": {
+      "type": "object",
+      "additionalProperties": true,
+      "required": ["id", "name", "actionIds", "actions"],
+      "properties": {
+        "id": { "type": "string", "minLength": 1, "maxLength": 80 },
+        "name": { "type": "string", "minLength": 1, "maxLength": 120 },
+        "description": { "type": "string", "maxLength": 5000 },
+        "actionIds": {
+          "type": "array",
+          "items": { "type": "string", "maxLength": 80 }
+        },
+        "actions": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/action" }
+        },
+        "triggers": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/trigger" }
+        },
+        "manualState": { "type": "string", "default": "notRun" },
+        "color": { "type": "string", "maxLength": 40 },
+        "icon": { "type": "string", "maxLength": 120 },
+        "gmNotes": { "type": "string", "maxLength": 5000 },
+        "requiresConfirmation": { "type": "boolean", "default": false },
+        "stopPointAfter": { "type": "boolean", "default": false },
+        "continueOnActionFailure": { "type": "boolean", "default": false },
+        "dangerLevel": {
+          "type": "string",
+          "enum": ["safe", "changesScene", "changesCombat", "disruptive"],
+          "default": "safe"
+        }
+      }
+    },
+    "action": {
+      "type": "object",
+      "additionalProperties": true,
+      "required": ["id", "type", "adapter", "name", "config"],
+      "properties": {
+        "id": { "type": "string", "minLength": 1, "maxLength": 80 },
+        "type": { "type": "string", "minLength": 1 },
+        "name": { "type": "string", "minLength": 1, "maxLength": 120 },
+        "enabled": { "type": "boolean", "default": true },
+        "adapter": { "type": "string", "minLength": 1 },
+        "config": { "type": "object", "additionalProperties": true, "default": {} },
+        "order": { "type": "integer", "minimum": 0, "maximum": 10000 },
+        "executionMode": { "type": "string", "enum": ["sequential", "parallel"], "default": "sequential" },
+        "parallelGroup": { "type": "string", "maxLength": 80 },
+        "failurePolicy": { "type": "string", "enum": ["stop", "continue", "skipRemaining"], "default": "stop" },
+        "precondition": { "type": "object", "additionalProperties": true },
+        "delayAfterMs": { "type": "integer", "minimum": 0, "maximum": 60000 },
+        "requiresConfirmation": { "type": "boolean", "default": false },
+        "rollbackSupported": { "type": "boolean", "default": false },
+        "rollbackSnapshotRef": { "type": "string", "maxLength": 120 }
+      }
+    },
+    "trigger": {
+      "type": "object",
+      "additionalProperties": true,
+      "required": ["id", "event", "action"],
+      "properties": {
+        "id": { "type": "string", "minLength": 1, "maxLength": 80 },
+        "name": { "type": "string", "minLength": 1, "maxLength": 120 },
+        "enabled": { "type": "boolean", "default": true },
+        "event": {
+          "type": "string",
+          "enum": [
+            "enemyDefeatedCount",
+            "combatantDefeatedCount",
+            "tokenHpAtOrBelow",
+            "tokenDefeated",
+            "allyDefeated",
+            "combatRoundAtLeast"
+          ]
+        },
+        "action": { "type": "string", "enum": ["selectBeat", "runBeat", "startSequence"] },
+        "targetSequenceId": { "type": "string", "maxLength": 80 },
+        "targetBeatId": { "type": "string", "maxLength": 80 },
+        "count": { "type": "integer", "minimum": 1, "maximum": 999 },
+        "round": { "type": "integer", "minimum": 1, "maximum": 999 },
+        "threshold": { "type": "number", "minimum": -999999, "maximum": 999999 },
+        "thresholdType": { "type": "string", "enum": ["hp", "percent"] },
+        "comparison": { "type": "string", "enum": ["gte", "lte", "gt", "lt", "eq"] },
+        "tokenUuids": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "actorUuids": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "dispositions": {
+          "type": "array",
+          "items": { "type": "integer", "enum": [-1, 0, 1] }
+        },
+        "once": { "type": "boolean", "default": true },
+        "cooldownMs": { "type": "integer", "minimum": 0, "maximum": 3600000 },
+        "requiresConfirmation": { "type": "boolean" },
+        "continueAfterValidationWarnings": { "type": "boolean", "default": false }
+      }
+    }
+  }
+}

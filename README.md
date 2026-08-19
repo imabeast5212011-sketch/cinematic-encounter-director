@@ -1,6 +1,6 @@
 # Cinematic Encounter Director
 
-Version 0.1.19 for Foundry VTT v14.
+Version 0.1.20 for Foundry VTT v14.
 
 Cinematic Encounter Director is a GM-only tactical orchestration module for preparing and running encounters as Sequences, Beats, Actions, and optional Triggers. It coordinates Foundry-native Scene, Token, light, wall, door, Combat, camera, chat, pause, and optional Playlist actions while leaving cinematic, audio, environmental, HUD, timeline, and session-planning systems in their own modules.
 
@@ -42,7 +42,7 @@ No arbitrary JavaScript execution is allowed. Imported JSON is treated as untrus
 
 ## Storage
 
-Version 0.1.19 stores Scene-bound Sequence data in module-owned Scene flags:
+Version 0.1.20 stores Scene-bound Sequence data in module-owned Scene flags:
 
 ```text
 cinematic-encounter-director.sceneSequences
@@ -228,6 +228,8 @@ Import validates JSON structure, schema version, forbidden executable fields, an
 
 Missing references remain editable for remapping in the Action editor.
 
+AI and MCP bridge authors should start with `AI-ENCOUNTER-JSON-GUIDE.md` or call `api.getEncounterAuthoringContext()` from a GM client. That context returns the live JSON schema, action catalog, trigger enums, provider ids, limits, forbidden fields, and an example package.
+
 ## Public API
 
 The module exposes:
@@ -239,6 +241,13 @@ const api = game.modules.get("cinematic-encounter-director").api;
 Available methods:
 
 - `openDirector(options)`.
+- `getJsonSchema()`.
+- `getEncounterAuthoringContext()`.
+- `readActionTypeCatalog()`.
+- `exportEncounterJson(options)`.
+- `validateEncounterJson(input)`.
+- `importEncounterJson(input, options)`.
+- `upsertSequence(sequence, options)`.
 - `registerActionProvider(provider)`.
 - `registerActionType(actionType)`.
 - `validateActionConfig(action, context)`.
@@ -250,7 +259,7 @@ Available methods:
 
 Providers must declare a unique id, display name, validation function, execution function, optional rollback function, optional emergency-stop function, and capability metadata. A provider cannot override an existing provider id.
 
-The API does not expose unrestricted document mutation.
+The import API validates JSON through the same untrusted-data path used by the UI. Imported data is not executed automatically. The API does not expose unrestricted document mutation.
 
 ## Troubleshooting
 
@@ -260,7 +269,7 @@ The API does not expose unrestricted document mutation.
 - If a lock remains after a disconnect, wait for the stale-lock timeout or reload with a GM client.
 - If imported references are unresolved, open each Action and remap UUIDs or external ids.
 - If native Playlist actions are unavailable, enable the native Playlist fallback world setting.
-- If Foundry appears to keep using an old Director version after update, force a full browser reload. Version 0.1.19 loads the runtime from a versioned folder path so browser module caches cannot reuse older `scripts/main.js` imports.
+- If Foundry appears to keep using an old Director version after update, force a full browser reload. Version 0.1.20 loads the runtime from a versioned folder path so browser module caches cannot reuse older `scripts/main.js` imports.
 
 ## Current Limitations
 
@@ -270,5 +279,5 @@ The API does not expose unrestricted document mutation.
 - COTS Character HUD uses the confirmed `game.cotsCharacterHud.socket` presentation API when present.
 - The locally inspected Cinematic Combat Timeline version exposes status/open-config API only, not countdown mutation API.
 - The Action editor now covers common native and integration fields with form controls. Raw JSON remains available for unusual payloads, imported data, and advanced provider-specific fields.
-- Remapping imported references is manual in v0.1.19.
+- Remapping imported references is manual in v0.1.20.
 - Player camera pan uses the module socket and should be tested carefully on the remote server.

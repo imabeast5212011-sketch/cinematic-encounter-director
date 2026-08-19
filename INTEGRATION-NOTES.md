@@ -94,3 +94,24 @@ Supported bridge members:
 - Optional `emergencyStop({ providerId })`.
 
 The Director sends only ids, action config, and minimal execution context. It does not send proprietary module objects through sockets or adapters.
+
+## AI And MCP Bridge Contract
+
+An MCP usually cannot talk to Foundry directly unless a browser bridge, Shadowbridge-style tool, or small Foundry module forwards calls into the Foundry client.
+
+The stable Director entry point is:
+
+```js
+const api = game.modules.get("cinematic-encounter-director").api;
+```
+
+Bridge tools should prefer these methods instead of reading private Scene flags:
+
+- `getEncounterAuthoringContext()` to discover the live schema, action catalog, trigger enums, provider ids, limits, forbidden fields, and example package.
+- `validateEncounterJson(input)` to parse and normalize AI-authored packages without saving.
+- `importEncounterJson(input, { mode: "duplicate" })` to import full packages.
+- `upsertSequence(sequence, { replace: true })` to create or replace one Sequence by id.
+- `exportEncounterJson(options)` to give another AI existing encounter context.
+- `requestExecution({ sequenceId, beatId, dryRun: true })` to validate execution before real use.
+
+Custom MCP bridges may also call `registerActionProvider()` and `registerActionType()` to add bridge-owned Actions. Once registered, those Actions appear in `getEncounterAuthoringContext()` so another AI can use them without scraping source files.

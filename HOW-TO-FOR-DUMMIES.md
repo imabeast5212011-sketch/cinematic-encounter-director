@@ -18,10 +18,10 @@ Use it like a cue board:
 4. Open your world as a GM.
 5. Open the Scene you want to run.
 
-For v0.1.19, the module should load this runtime:
+For v0.1.20, the module should load this runtime:
 
 ```text
-scripts/runtime-0.1.19/main.js
+scripts/runtime-0.1.20/main.js
 ```
 
 If Foundry still shows an older version, do a full browser reload and restart Foundry if needed.
@@ -312,6 +312,29 @@ To add an integration Action:
 
 After that works, test **Run Beat** with confirmation on.
 
+## AI-Written Encounters
+
+Another AI can write encounters as Director JSON.
+
+The simple rule: have the AI use `AI-ENCOUNTER-JSON-GUIDE.md`, then import the JSON from the Director. If the AI is connected through Shadowbridge or another Foundry bridge, it can ask the live module for the exact contract:
+
+```js
+const api = game.modules.get("cinematic-encounter-director").api;
+const context = await api.getEncounterAuthoringContext();
+```
+
+The AI should not guess real Token, Scene, Actor, sound, or external module ids. If it does not know them, it should leave them blank and write a GM note telling you what to map.
+
+Never import AI JSON and run it blindly:
+
+1. Import the JSON.
+2. Open the Sequence.
+3. Check every Beat.
+4. Remap missing Scene, Token, Actor, audio, or integration references.
+5. Validate the Beat.
+6. Dry-run if possible.
+7. Run it only after it makes sense.
+
 ## Common Problems
 
 The Director does not open:
@@ -346,7 +369,7 @@ The UI still shows an old version:
 
 - Do a full browser reload.
 - Restart Foundry if needed.
-- Confirm the module manifest points at `scripts/runtime-0.1.19/main.js`.
+- Confirm the module manifest points at `scripts/runtime-0.1.20/main.js`.
 
 ## Best Habits
 
