@@ -188,7 +188,7 @@ Implemented Foundry-native Actions:
 - Give an Item to configured Actors or Token actors after GM confirmation.
 - Remove or reduce an Item from configured Actors or Token actors after GM confirmation.
 - Create a Journal handout after GM confirmation.
-- Show an existing Journal handout after GM confirmation.
+- Show an existing Journal handout to all players or selected user IDs after GM confirmation.
 - Request a player roll in chat.
 
 Native document mutation resolves UUIDs, checks document type, uses allowlisted fields, and updates only intended fields.

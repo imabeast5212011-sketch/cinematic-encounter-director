@@ -1,0 +1,1203 @@
+.cinematic-encounter-director,
+.ced-director,
+.ced-sequence-editor,
+.ced-action-editor,
+#cinematic-encounter-director-director,
+#cinematic-encounter-director-sequence-editor,
+#cinematic-encounter-director-action-editor {
+  --ced-bg: #111319;
+  --ced-bg-deep: #0b0d12;
+  --ced-panel: #1b1f28;
+  --ced-panel-raised: #232834;
+  --ced-panel-soft: #171b23;
+  --ced-input: #0f1218;
+  --ced-line: #3b4352;
+  --ced-line-soft: #2b323f;
+  --ced-text: #f3efe4;
+  --ced-muted: #b8bfca;
+  --ced-dim: #858e9d;
+  --ced-brass: #d6a852;
+  --ced-brass-soft: #6e5425;
+  --ced-success: #57d6a7;
+  --ced-success-bg: #123f34;
+  --ced-warning: #e5ba54;
+  --ced-warning-bg: #3e331b;
+  --ced-failure: #ef6f74;
+  --ced-failure-bg: #432026;
+  --ced-info: #78abe8;
+  --ced-info-bg: #1a304d;
+  --ced-violet: #9a8fc5;
+  --ced-violet-bg: #2c2940;
+  --ced-radius: 7px;
+  --ced-gap: 10px;
+  color: var(--ced-text);
+  min-height: 0;
+}
+
+.cinematic-encounter-director,
+.ced-director,
+.ced-sequence-editor,
+.ced-action-editor,
+#cinematic-encounter-director-director,
+#cinematic-encounter-director-sequence-editor,
+#cinematic-encounter-director-action-editor,
+[data-ced-fit-window="true"] {
+  max-width: calc(100vw - 8px) !important;
+  max-height: calc(100vh - 8px) !important;
+  overflow: hidden !important;
+}
+
+.cinematic-encounter-director *,
+.ced-director *,
+.ced-sequence-editor *,
+.ced-action-editor * {
+  box-sizing: border-box;
+  letter-spacing: 0;
+}
+
+.cinematic-encounter-director .window-content,
+.cinematic-encounter-director .application-content,
+.ced-director .window-content,
+.ced-director .application-content,
+.ced-sequence-editor .window-content,
+.ced-sequence-editor .application-content,
+.ced-action-editor .window-content,
+.ced-action-editor .application-content,
+[data-ced-fit-window="true"] .window-content,
+[data-ced-fit-window="true"] .application-content {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  overflow: hidden !important;
+  background: var(--ced-bg-deep);
+}
+
+.cinematic-encounter-director [data-application-part],
+.ced-director [data-application-part],
+.ced-sequence-editor [data-application-part],
+.ced-action-editor [data-application-part] {
+  display: flex;
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
+.cinematic-encounter-director button,
+.cinematic-encounter-director input,
+.cinematic-encounter-director select,
+.cinematic-encounter-director textarea {
+  font: inherit;
+}
+
+.cinematic-encounter-director button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  min-height: 28px;
+  max-width: 100%;
+  border: 1px solid var(--ced-line);
+  border-radius: 6px;
+  background: #252b36;
+  color: var(--ced-text);
+  padding: 4px 8px;
+  cursor: pointer;
+  line-height: 1.1;
+  text-align: center;
+}
+
+.cinematic-encounter-director button:hover {
+  border-color: var(--ced-brass);
+  background: #2b3240;
+}
+
+.cinematic-encounter-director button:disabled {
+  opacity: 0.48;
+  cursor: not-allowed;
+}
+
+.cinematic-encounter-director button:focus-visible,
+.cinematic-encounter-director input:focus-visible,
+.cinematic-encounter-director select:focus-visible,
+.cinematic-encounter-director textarea:focus-visible,
+.cinematic-encounter-director summary:focus-visible {
+  outline: 2px solid var(--ced-info);
+  outline-offset: 2px;
+}
+
+.cinematic-encounter-director input,
+.cinematic-encounter-director select,
+.cinematic-encounter-director textarea {
+  width: 100%;
+  min-width: 0;
+  border: 1px solid var(--ced-line);
+  border-radius: 6px;
+  background: var(--ced-input);
+  color: var(--ced-text);
+  padding: 7px 8px;
+}
+
+.cinematic-encounter-director textarea {
+  resize: vertical;
+}
+
+.cinematic-encounter-director label {
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+  color: var(--ced-text);
+  font-weight: 600;
+}
+
+.cinematic-encounter-director label span,
+.cinematic-encounter-director small,
+.ced-muted,
+.ced-title-block > span,
+.ced-sequence-meta span,
+.ced-sequence-meta p,
+.ced-action-tags,
+.ced-action-body p,
+.ced-health dd,
+.ced-health p,
+.ced-preview p,
+.ced-log time,
+.ced-empty p,
+.ced-form-section > header span {
+  color: var(--ced-muted);
+}
+
+.cinematic-encounter-director h2,
+.cinematic-encounter-director h3,
+.cinematic-encounter-director h4,
+.cinematic-encounter-director p,
+.cinematic-encounter-director dl,
+.cinematic-encounter-director ol {
+  margin: 0;
+}
+
+.cinematic-encounter-director h2 {
+  font-size: 1.1rem;
+  line-height: 1.15;
+}
+
+.cinematic-encounter-director h3 {
+  font-size: 1rem;
+  line-height: 1.15;
+}
+
+.cinematic-encounter-director h4 {
+  font-size: 0.92rem;
+  line-height: 1.15;
+}
+
+.ced-shell,
+.ced-action-form,
+.ced-editor-layout {
+  flex: 1 1 auto;
+  min-width: 0;
+  min-height: 0;
+  width: 100%;
+  height: 100%;
+  max-height: calc(100vh - 48px);
+  overflow: auto;
+  background:
+    linear-gradient(180deg, rgba(214, 168, 82, 0.035), transparent 160px),
+    var(--ced-bg);
+  scrollbar-gutter: stable;
+}
+
+.ced-shell {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ced-gap);
+  padding: 10px;
+}
+
+.ced-panel,
+.ced-editor-panel,
+.ced-reference-tools,
+.ced-editor-status {
+  border: 1px solid var(--ced-line);
+  border-radius: var(--ced-radius);
+  background: var(--ced-panel);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.025);
+  min-width: 0;
+}
+
+.ced-panel,
+.ced-editor-panel,
+.ced-reference-tools,
+.ced-editor-status {
+  padding: 10px;
+}
+
+.ced-command-bar,
+.ced-action-editor-head,
+.ced-editor-panel > header,
+.ced-panel > header,
+.ced-beat-hero,
+.ced-log > header,
+.ced-health-item header,
+.ced-action-cue header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  min-width: 0;
+}
+
+.ced-title-block {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+}
+
+.ced-title-block h2,
+.ced-title-block span,
+.ced-sequence-meta strong,
+.ced-action-cue strong,
+.ced-cue-main strong {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ced-command-bar {
+  flex: 0 0 auto;
+  border: 1px solid var(--ced-line-soft);
+  border-radius: var(--ced-radius);
+  background: #161a22;
+  padding: 8px;
+}
+
+.ced-toolbar-actions,
+.ced-mode-tabs,
+.ced-main-controls,
+.ced-row-actions,
+.ced-check-row,
+.ced-reference-actions,
+.ced-trigger-tools,
+.ced-plan-actions,
+.ced-action-summary-line,
+.ced-add-action,
+.ced-quick-builder > div:last-child,
+.ced-action-tags,
+.ced-cue-badges {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+  min-width: 0;
+}
+
+.ced-toolbar-actions {
+  justify-content: flex-end;
+}
+
+.ced-toolbar-actions button,
+.ced-row-actions button {
+  min-width: 30px;
+  padding-inline: 7px;
+}
+
+.ced-mode-tabs {
+  flex: 0 0 auto;
+  border: 1px solid var(--ced-line-soft);
+  border-radius: 7px;
+  background: var(--ced-input);
+  padding: 3px;
+}
+
+.ced-mode-tabs button,
+.ced-log-filters button {
+  min-height: 26px;
+  border-color: transparent;
+  background: transparent;
+  color: var(--ced-muted);
+}
+
+.ced-mode-tabs button.is-active,
+.ced-log-filters button.is-active {
+  border-color: var(--ced-brass-soft);
+  background: var(--ced-warning-bg);
+  color: var(--ced-text);
+}
+
+.ced-primary {
+  border-color: #5ce0b0 !important;
+  background: #177154 !important;
+  color: #f3fff9 !important;
+}
+
+.ced-danger {
+  border-color: var(--ced-failure) !important;
+  color: #ffe4e5 !important;
+}
+
+.ced-version,
+.ced-chip,
+.ced-result,
+.ced-kicker {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  width: fit-content;
+  max-width: 100%;
+  min-height: 20px;
+  border: 1px solid var(--ced-line);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.025);
+  color: var(--ced-muted);
+  padding: 2px 7px;
+  font-size: 0.76rem;
+  font-weight: 700;
+  line-height: 1.15;
+}
+
+.ced-version {
+  vertical-align: middle;
+  margin-left: 5px;
+}
+
+.ced-kicker {
+  color: var(--ced-brass);
+}
+
+.ced-chip-ready,
+.ced-chip-success,
+.ced-result-success,
+.ced-result-ready,
+.ced-result-completed,
+.ced-result-rolledback,
+.ced-result-rolledBack,
+.ced-result-rolled-back,
+.ced-state-completed,
+.ced-state-ready {
+  border-color: var(--ced-success);
+  background: var(--ced-success-bg);
+  color: #c9ffec;
+}
+
+.ced-chip-warning,
+.ced-chip-trigger,
+.ced-result-warning,
+.ced-result-unsupported,
+.ced-result-skipped,
+.ced-result-dryrun,
+.ced-result-dryRun,
+.ced-state-warning,
+.ced-danger-changes-scene,
+.ced-danger-changesScene {
+  border-color: var(--ced-warning);
+  background: var(--ced-warning-bg);
+  color: #ffe7aa;
+}
+
+.ced-chip-failure,
+.ced-result-failure,
+.ced-result-cancelled,
+.ced-state-failed,
+.ced-danger-disruptive {
+  border-color: var(--ced-failure);
+  background: var(--ced-failure-bg);
+  color: #ffd7da;
+}
+
+.ced-chip-disabled,
+.ced-chip-archived,
+.ced-state-disabled,
+.ced-state-not-run,
+.ced-status-disabled,
+.ced-status-detected-only,
+.ced-status-config-only,
+.ced-status-api-not-detected {
+  border-color: var(--ced-violet);
+  background: var(--ced-violet-bg);
+  color: #ddd8ff;
+}
+
+.ced-danger-safe,
+.ced-chip-safe {
+  border-color: var(--ced-success);
+  color: #c9ffec;
+}
+
+.ced-danger-changes-combat,
+.ced-danger-changesCombat {
+  border-color: var(--ced-info);
+  background: var(--ced-info-bg);
+  color: #d6e8ff;
+}
+
+.ced-director-grid {
+  display: grid;
+  grid-template-columns: minmax(230px, 280px) minmax(420px, 1fr) minmax(285px, 360px);
+  gap: var(--ced-gap);
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.ced-rail,
+.ced-stage,
+.ced-inspector {
+  min-width: 0;
+  min-height: 0;
+}
+
+.ced-rail,
+.ced-inspector {
+  display: grid;
+  align-content: start;
+  gap: var(--ced-gap);
+  overflow: auto;
+  scrollbar-gutter: stable;
+}
+
+.ced-stage {
+  display: grid;
+  grid-template-rows: auto auto auto minmax(0, 1fr);
+  gap: var(--ced-gap);
+  overflow: hidden;
+}
+
+.ced-sequence-card,
+.ced-inspector-card {
+  display: grid;
+  gap: 9px;
+}
+
+.ced-sequence-meta {
+  display: grid;
+  gap: 4px;
+  border-top: 1px solid var(--ced-line-soft);
+  padding-top: 8px;
+}
+
+.ced-cue-list {
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+  min-height: 280px;
+  overflow: hidden;
+}
+
+.ced-cue-list ol,
+.ced-action-cues,
+.ced-log ol,
+.ced-health-grid,
+.ced-edit-list,
+.ced-trigger-list {
+  list-style: none;
+  min-height: 0;
+  margin: 0;
+  padding: 0;
+  overflow: auto;
+  scrollbar-gutter: stable;
+}
+
+.ced-cue-list ol {
+  display: grid;
+  align-content: start;
+  gap: 7px;
+  padding-right: 2px;
+}
+
+.ced-cue-item {
+  min-width: 0;
+}
+
+.ced-cue-button {
+  display: grid !important;
+  grid-template-columns: 28px minmax(0, 1fr) max-content;
+  grid-template-areas: "index main badges";
+  gap: 8px;
+  width: 100%;
+  min-height: 48px;
+  align-items: center;
+  text-align: left;
+  justify-content: stretch !important;
+  border-color: var(--ced-line-soft);
+  background: var(--ced-panel-soft);
+}
+
+.ced-cue-item.is-selected .ced-cue-button,
+.ced-edit-list li.is-selected {
+  border-color: var(--ced-success);
+  background: #173d34;
+}
+
+.ced-cue-index,
+.ced-action-order {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  min-width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  background: var(--ced-input);
+  color: var(--ced-text);
+  font-weight: 800;
+}
+
+.ced-cue-button .ced-cue-index {
+  grid-area: index;
+}
+
+.ced-cue-main {
+  grid-area: main;
+  display: grid;
+  gap: 3px;
+  min-width: 0;
+}
+
+.ced-cue-main span {
+  color: var(--ced-muted);
+  font-size: 0.82rem;
+}
+
+.ced-cue-badges {
+  grid-area: badges;
+  justify-content: flex-end;
+  min-width: max-content;
+}
+
+.ced-beat-hero {
+  align-items: flex-start;
+  border-bottom: 1px solid var(--ced-line-soft);
+  padding-bottom: 10px;
+}
+
+.ced-beat-hero > div:first-child {
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+}
+
+.ced-beat-hero h3 {
+  font-size: 1.22rem;
+}
+
+.ced-beat-summary {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 6px;
+  max-width: 48%;
+}
+
+.ced-trigger-strip {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: center;
+  gap: 8px;
+  border: 1px solid var(--ced-brass-soft);
+  border-radius: var(--ced-radius);
+  background: #201b12;
+  color: #f7dfaa;
+  padding: 8px 10px;
+}
+
+.ced-main-controls {
+  justify-content: flex-start;
+  border-bottom: 1px solid var(--ced-line-soft);
+  padding-bottom: 10px;
+}
+
+.ced-action-cues {
+  display: grid;
+  align-content: start;
+  gap: 8px;
+  padding-right: 2px;
+}
+
+.ced-action-cue {
+  display: grid;
+  grid-template-columns: 32px minmax(0, 1fr) minmax(130px, auto);
+  gap: 10px;
+  align-items: start;
+  border: 1px solid var(--ced-line-soft);
+  border-radius: var(--ced-radius);
+  background: var(--ced-panel-soft);
+  padding: 9px;
+  min-width: 0;
+}
+
+.ced-action-cue.is-disabled {
+  opacity: 0.66;
+}
+
+.ced-action-body {
+  display: grid;
+  gap: 5px;
+  min-width: 0;
+}
+
+.ced-action-body header {
+  justify-content: flex-start;
+}
+
+.ced-action-body p,
+.ced-action-tags,
+.ced-log strong,
+.ced-health dd,
+.ced-health p,
+.ced-preview li,
+.ced-edit-list span,
+.ced-edit-list em {
+  overflow-wrap: anywhere;
+}
+
+.ced-action-tags span {
+  color: var(--ced-muted);
+  font-size: 0.78rem;
+}
+
+.ced-action-state {
+  display: grid;
+  gap: 7px;
+  justify-items: end;
+}
+
+.ced-inspector {
+  grid-template-rows: auto;
+}
+
+.ced-stat-grid,
+.ced-health dl {
+  display: grid;
+  grid-template-columns: max-content minmax(0, 1fr);
+  gap: 6px 10px;
+}
+
+.ced-stat-grid dt,
+.ced-health dt {
+  color: var(--ced-text);
+  font-weight: 700;
+}
+
+.ced-plan-actions {
+  align-items: stretch;
+}
+
+.ced-plan-actions button {
+  justify-content: flex-start;
+  flex: 1 1 145px;
+}
+
+.ced-preview {
+  display: grid;
+  gap: 8px;
+}
+
+.ced-preview ol {
+  display: grid;
+  gap: 5px;
+}
+
+.ced-preview li {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  border-top: 1px solid var(--ced-line-soft);
+  padding-top: 5px;
+}
+
+.ced-health details,
+.ced-advanced-json,
+.ced-trigger-card details {
+  display: grid;
+  gap: 8px;
+}
+
+.ced-health summary,
+.ced-advanced-json summary,
+.ced-trigger-card summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  cursor: pointer;
+  color: var(--ced-text);
+  font-weight: 800;
+}
+
+.ced-health-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 8px;
+  max-height: min(42vh, 420px);
+  padding-top: 8px;
+  padding-right: 2px;
+}
+
+.ced-health-item {
+  border: 1px solid var(--ced-line-soft);
+  border-radius: var(--ced-radius);
+  background: var(--ced-panel-soft);
+  padding: 8px;
+}
+
+.ced-health-item header span {
+  color: var(--ced-muted);
+  font-weight: 800;
+}
+
+.ced-error-text {
+  color: #ffd3d6 !important;
+}
+
+.ced-log {
+  display: grid;
+  grid-template-rows: auto auto minmax(0, 1fr);
+  gap: 8px;
+  min-height: 190px;
+  overflow: hidden;
+}
+
+.ced-log-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+
+.ced-log ol {
+  display: grid;
+  align-content: start;
+  gap: 6px;
+}
+
+.ced-log-entry {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  gap: 8px;
+  align-items: center;
+  border-top: 1px solid var(--ced-line-soft);
+  padding-top: 6px;
+}
+
+.ced-empty {
+  display: grid;
+  place-items: center;
+  align-content: center;
+  gap: 6px;
+  min-height: 140px;
+  padding: 16px;
+  text-align: center;
+}
+
+.ced-empty-compact {
+  min-height: 92px;
+  padding: 10px;
+}
+
+.ced-editor-layout {
+  display: grid !important;
+  grid-template-columns: minmax(320px, 0.9fr) minmax(420px, 1.3fr);
+  grid-template-rows: minmax(220px, max-content) minmax(260px, 1fr);
+  grid-template-areas:
+    "sequence beats"
+    "beat actions";
+  align-content: stretch;
+  align-items: stretch;
+  justify-content: stretch;
+  gap: var(--ced-gap);
+  width: 100%;
+  height: 100%;
+  padding: 10px;
+}
+
+.ced-sequence-panel {
+  grid-area: sequence;
+}
+
+.ced-beats-panel {
+  grid-area: beats;
+}
+
+.ced-editor-right {
+  display: contents;
+}
+
+.ced-beat-settings-panel {
+  grid-area: beat;
+}
+
+.ced-actions-panel {
+  grid-area: actions;
+}
+
+.ced-sequence-panel,
+.ced-beats-panel,
+.ced-beat-settings-panel,
+.ced-actions-panel {
+  display: grid;
+  align-content: start;
+  gap: 8px;
+  min-width: 0;
+  min-height: 0;
+  overflow: auto;
+  scrollbar-gutter: stable;
+}
+
+.ced-sequence-panel,
+.ced-beats-panel {
+  max-height: min(42vh, 360px);
+}
+
+.ced-beat-settings-panel,
+.ced-actions-panel {
+  max-height: min(58vh, 520px);
+}
+
+.ced-bound-scene,
+.ced-quick-builder {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  border: 1px solid var(--ced-line-soft);
+  border-radius: var(--ced-radius);
+  background: var(--ced-panel-soft);
+  padding: 8px;
+}
+
+.ced-grid-two,
+.ced-grid-three,
+.ced-grid-four,
+.ced-action-form-grid,
+.ced-status-grid {
+  display: grid;
+  gap: 8px;
+  min-width: 0;
+}
+
+.ced-grid-two {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.ced-grid-three {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.ced-grid-four {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.ced-action-form-grid,
+.ced-status-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.ced-check-row label {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 32px;
+  border: 1px solid var(--ced-line-soft);
+  border-radius: 6px;
+  background: var(--ced-panel-soft);
+  padding: 5px 8px;
+}
+
+.ced-check-row input[type="checkbox"] {
+  width: auto;
+  margin: 0;
+}
+
+.ced-edit-list {
+  display: grid;
+  align-content: start;
+  gap: 7px;
+}
+
+.ced-edit-list li {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 8px;
+  align-items: center;
+  border: 1px solid var(--ced-line-soft);
+  border-radius: var(--ced-radius);
+  background: var(--ced-panel-soft);
+  padding: 7px;
+}
+
+.ced-edit-list li > button {
+  display: grid;
+  grid-template-columns: 28px minmax(0, 1fr);
+  justify-content: stretch;
+  width: 100%;
+  text-align: left;
+}
+
+.ced-edit-list li > button span:last-child {
+  display: grid;
+  gap: 2px;
+}
+
+.ced-edit-list li > div:last-child {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 5px;
+}
+
+.ced-edit-list em {
+  color: var(--ced-dim);
+  font-style: normal;
+  font-size: 0.78rem;
+}
+
+.ced-add-action {
+  flex: 2 1 420px;
+  justify-content: flex-end;
+}
+
+.ced-add-action select {
+  flex: 1 1 260px;
+  min-width: min(100%, 240px);
+}
+
+.ced-quick-builder {
+  flex-wrap: wrap;
+}
+
+.ced-actions-panel > header {
+  align-items: flex-start;
+  flex-wrap: wrap;
+}
+
+.ced-actions-panel > header > div:first-child {
+  flex: 1 1 180px;
+  min-width: 160px;
+}
+
+.ced-actions-panel .ced-add-action button,
+.ced-quick-builder button {
+  flex: 0 0 auto;
+  white-space: nowrap;
+}
+
+.ced-quick-builder > div:first-child {
+  display: grid;
+  gap: 2px;
+  flex: 1 1 240px;
+  min-width: 0;
+}
+
+.ced-quick-builder > div:first-child span {
+  min-width: 0;
+}
+
+.ced-quick-builder > div:last-child {
+  flex: 0 1 auto;
+  justify-content: flex-end;
+  min-width: 0;
+}
+
+.ced-trigger-editor,
+.ced-form-section,
+.ced-config-panel,
+.ced-action-overview {
+  display: grid;
+  gap: 9px;
+  min-width: 0;
+}
+
+.ced-trigger-tools {
+  justify-content: flex-start;
+}
+
+.ced-trigger-list {
+  display: grid;
+  gap: 8px;
+}
+
+.ced-trigger-card,
+.ced-form-section,
+.ced-advanced-json {
+  border: 1px solid var(--ced-line-soft);
+  border-radius: var(--ced-radius);
+  background: var(--ced-panel-soft);
+  padding: 9px;
+}
+
+.ced-trigger-card {
+  display: grid;
+  gap: 8px;
+}
+
+.ced-trigger-card > header span {
+  color: var(--ced-muted);
+}
+
+.ced-trigger-card p {
+  color: var(--ced-muted);
+}
+
+.ced-action-form {
+  display: grid;
+  align-content: start;
+  gap: var(--ced-gap);
+  padding: 10px;
+}
+
+.ced-action-workbench {
+  width: min(100%, 980px);
+}
+
+.ced-action-overview p {
+  font-weight: 700;
+}
+
+.ced-form-section > header,
+.ced-config-panel > header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.ced-action-form textarea,
+.ced-trigger-json textarea,
+.ced-advanced-json textarea,
+.ced-form-section textarea {
+  font-family: ui-monospace, SFMono-Regular, Consolas, "Liberation Mono", monospace;
+}
+
+.ced-reference-actions {
+  align-content: end;
+  justify-content: flex-start;
+}
+
+.ced-editor-status {
+  display: grid;
+  gap: 5px;
+}
+
+@media (max-width: 1180px) {
+  .ced-director-grid {
+    grid-template-columns: minmax(220px, 280px) minmax(420px, 1fr);
+    overflow: auto;
+  }
+
+  .ced-inspector {
+    grid-column: 1 / -1;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    overflow: visible;
+  }
+
+  .ced-log,
+  .ced-health {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (max-width: 820px) {
+  .ced-command-bar,
+  .ced-beat-hero,
+  .ced-action-editor-head {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .ced-mode-tabs,
+  .ced-toolbar-actions,
+  .ced-main-controls,
+  .ced-beat-summary {
+    justify-content: flex-start;
+    max-width: 100%;
+  }
+
+  .ced-director-grid,
+  .ced-inspector,
+  .ced-editor-layout,
+  .ced-action-form-grid,
+  .ced-status-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  .ced-editor-layout {
+    grid-template-areas:
+      "sequence"
+      "beats"
+      "beat"
+      "actions";
+    width: 100%;
+    height: auto;
+  }
+
+  .ced-stage {
+    min-height: 420px;
+  }
+
+  .ced-grid-three,
+  .ced-grid-four {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 560px) {
+  .ced-grid-two,
+  .ced-grid-three,
+  .ced-grid-four,
+  .ced-action-cue,
+  .ced-log-entry,
+  .ced-preview li,
+  .ced-edit-list li {
+    grid-template-columns: 1fr;
+  }
+
+  .ced-action-state {
+    justify-items: start;
+  }
+
+  .ced-toolbar-actions button,
+  .ced-row-actions button {
+    min-width: 28px;
+  }
+
+  .ced-cue-button {
+    grid-template-columns: 28px minmax(0, 1fr);
+    grid-template-areas:
+      "index main"
+      ". badges";
+  }
+
+  .ced-cue-badges {
+    min-width: 0;
+    justify-content: flex-start;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cinematic-encounter-director *,
+  .cinematic-encounter-director *::before,
+  .cinematic-encounter-director *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+}
+
+.ced-confirm {
+  display: grid;
+  gap: 8px;
+}
+
+.ced-confirm dl {
+  display: grid;
+  grid-template-columns: max-content minmax(0, 1fr);
+  gap: 4px 10px;
+  margin: 0;
+}
+
+.ced-confirm ol {
+  display: grid;
+  gap: 5px;
+  margin: 0;
+  padding-left: 18px;
+}
+
+.ced-confirm li {
+  display: grid;
+  gap: 2px;
+}

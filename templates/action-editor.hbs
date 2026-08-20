@@ -430,6 +430,12 @@
           <input type="text" name="pageId" value="{{form.config.pageId}}">
         </label>
       </div>
+      {{#if form.isShowJournal}}
+      <label>
+        <span>Target Player User IDs (one per line; blank shows all players)</span>
+        <textarea name="userIds" rows="3" spellcheck="false">{{form.userRefs}}</textarea>
+      </label>
+      {{/if}}
       {{/if}}
       <div class="ced-check-row">
         <label><input type="checkbox" name="showToPlayers" {{#if form.config.showToPlayers}}checked{{/if}}> Show to players</label>
