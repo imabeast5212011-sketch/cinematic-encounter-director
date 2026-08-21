@@ -18,10 +18,10 @@ Use it like a cue board:
 4. Open your world as a GM.
 5. Open the Scene you want to run.
 
-For v0.1.21, the module should load this runtime:
+For v0.1.23, the module should load this runtime:
 
 ```text
-scripts/runtime-0.1.21/main.js
+scripts/runtime-0.1.23/main.js
 ```
 
 If Foundry still shows an older version, do a full browser reload and restart Foundry if needed.
@@ -252,6 +252,28 @@ The safest Trigger setup is:
 
 Only switch a Trigger to **Run Beat** after you have tested it.
 
+## Add Combat-Flow Triggers
+
+Use these for things like `round 2 reinforcements`, `after combat starts`, or `cleanup after combat ends`.
+
+1. Open the Sequence editor.
+2. Select the Beat that should happen.
+3. Click **Combat Start**, **Round 2**, or **Combat End**.
+4. Leave **Result** as **Select Beat** while testing.
+5. For round triggers, set **Round** to the exact round number.
+6. Click **Save Beat**.
+7. Use the test buttons in the Trigger area: **Test Start**, **Round 1**, **Round 2**, **Round 3**, **Round 4**, **Turn 1**, **Init 10**, or **Test End**.
+
+Those test buttons dry-run trigger matching. They do not create Combat, advance initiative, or move Tokens. A matching test writes a dry-run entry to the Execution Log so you can see what would have happened.
+
+Useful combat Trigger types:
+
+- `Combat started`: fires when combat reaches round 1.
+- `Combat round started`: fires on the exact round you set.
+- `Combat turn started`: uses the one-based turn number in the tracker.
+- `Initiative reached`: fires when the active combatant's initiative matches the comparison.
+- `Combat ended`: fires when the Combat document is deleted.
+
 ## Add An Enemy Count Trigger
 
 Use this for waves, phase changes, or morale breaks.
@@ -299,7 +321,7 @@ Use these defaults:
 - Do not add a new Trigger while its condition is already true unless you want it to fire soon.
 - Do not press **Reset** unless you want once-only Triggers to be able to fire again.
 
-Once a once-only Trigger fires, the module records that in the Scene. More HP or combat updates should not fire the same Trigger again unless its state is reset or the Trigger is replaced.
+Once a once-only Trigger fires, the module records that in the Scene. More HP or combat updates should not fire the same Trigger again unless its state is reset or the Trigger is replaced. Combat round triggers are recorded with combat/round context, so round 2 in a new Combat can still fire.
 
 ## Use Integrations
 
@@ -393,7 +415,7 @@ The UI still shows an old version:
 
 - Do a full browser reload.
 - Restart Foundry if needed.
-- Confirm the module manifest points at `scripts/runtime-0.1.21/main.js`.
+- Confirm the module manifest points at `scripts/runtime-0.1.23/main.js`.
 
 ## Best Habits
 

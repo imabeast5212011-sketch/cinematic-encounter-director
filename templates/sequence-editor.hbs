@@ -117,9 +117,22 @@
         </div>
       </header>
       <div class="ced-trigger-tools">
+        <button type="button" data-action="add-combat-start-trigger"><i class="fa-solid fa-flag-checkered"></i> Combat Start</button>
+        <button type="button" data-action="add-round-trigger"><i class="fa-solid fa-rotate"></i> Round 2</button>
+        <button type="button" data-action="add-combat-end-trigger"><i class="fa-solid fa-hourglass-end"></i> Combat End</button>
         <button type="button" data-action="add-enemy-count-trigger"><i class="fa-solid fa-skull-crossbones"></i> Enemy Count</button>
         <button type="button" data-action="add-hp-threshold-trigger"><i class="fa-solid fa-heart-pulse"></i> HP 50%</button>
         <button type="button" data-action="add-ally-death-trigger"><i class="fa-solid fa-user-shield"></i> Ally Down</button>
+      </div>
+      <div class="ced-trigger-tools ced-trigger-sim-tools">
+        <button type="button" data-action="simulate-combat-trigger" data-event="combatStarted"><i class="fa-solid fa-vial"></i> Test Start</button>
+        <button type="button" data-action="simulate-combat-trigger" data-event="combatRoundStarted" data-round="1">Round 1</button>
+        <button type="button" data-action="simulate-combat-trigger" data-event="combatRoundStarted" data-round="2">Round 2</button>
+        <button type="button" data-action="simulate-combat-trigger" data-event="combatRoundStarted" data-round="3">Round 3</button>
+        <button type="button" data-action="simulate-combat-trigger" data-event="combatRoundStarted" data-round="4">Round 4</button>
+        <button type="button" data-action="simulate-combat-trigger" data-event="combatTurnStarted" data-turn-number="1">Turn 1</button>
+        <button type="button" data-action="simulate-combat-trigger" data-event="initiativeReached" data-initiative="10">Init 10</button>
+        <button type="button" data-action="simulate-combat-trigger" data-event="combatEnded"><i class="fa-solid fa-vial-circle-check"></i> Test End</button>
       </div>
       {{#if triggerDisplays.length}}
       <ol class="ced-trigger-list">
@@ -171,19 +184,46 @@
             </label>
           </div>
           <div class="ced-grid-three">
+            {{#if usesCount}}
             <label>
               <span>Count</span>
               <input type="number" name="trigger-{{id}}-count" min="1" max="999" value="{{count}}">
             </label>
+            {{/if}}
+            {{#if usesRound}}
             <label>
               <span>Round</span>
               <input type="number" name="trigger-{{id}}-round" min="1" max="999" value="{{round}}">
             </label>
+            {{/if}}
+            {{#if usesTurn}}
+            <label>
+              <span>Turn</span>
+              <input type="number" name="trigger-{{id}}-turn" min="1" max="999" value="{{turn}}">
+            </label>
+            {{/if}}
+            {{#if usesInitiative}}
+            <label>
+              <span>Initiative</span>
+              <input type="number" name="trigger-{{id}}-initiative" step="0.01" value="{{initiative}}">
+            </label>
+            {{/if}}
+            {{#if usesComparison}}
+            <label>
+              <span>Comparison</span>
+              <select name="trigger-{{id}}-comparison">
+                {{#each comparisonOptions}}
+                <option value="{{value}}" {{#if selected}}selected{{/if}}>{{label}}</option>
+                {{/each}}
+              </select>
+            </label>
+            {{/if}}
             <label>
               <span>Cooldown ms</span>
               <input type="number" name="trigger-{{id}}-cooldownMs" min="0" max="3600000" step="1000" value="{{cooldownMs}}">
             </label>
           </div>
+          {{#if usesHp}}
           <div class="ced-grid-two">
             <label>
               <span>HP Threshold</span>
@@ -198,6 +238,8 @@
               </select>
             </label>
           </div>
+          {{/if}}
+          {{#if usesWatchRefs}}
           <details>
             <summary>Watched references</summary>
             <label>
@@ -213,6 +255,7 @@
               <input type="text" name="trigger-{{id}}-dispositions" value="{{dispositionRefs}}">
             </label>
           </details>
+          {{/if}}
           <div class="ced-check-row">
             <label><input type="checkbox" name="trigger-{{id}}-enabled" {{#if enabled}}checked{{/if}}> Enabled</label>
             <label><input type="checkbox" name="trigger-{{id}}-once" {{#if once}}checked{{/if}}> Once only</label>

@@ -1,6 +1,6 @@
 # Cinematic Encounter Director Functionality
 
-This file is a feature inventory for Cinematic Encounter Director v0.1.21.
+This file is a feature inventory for Cinematic Encounter Director v0.1.23.
 
 ## Purpose
 
@@ -69,8 +69,10 @@ It is meant to sit above Foundry combat and related cinematic modules. It does n
 - Enable or disable Actions.
 - Add quick combat setup Actions from selected canvas Tokens.
 - Add reinforcement wave Actions from selected canvas Tokens.
+- Add quick combat-flow Triggers for combat start, round 2, and combat end.
 - Add common automation Triggers from selected canvas Tokens.
 - Edit common Trigger settings with form controls.
+- Dry-run simulated Combat Start, Round 1-4, Turn 1, Initiative 10, and Combat End trigger events.
 - Use Advanced Trigger JSON when unusual Trigger payloads are needed.
 
 ## Beat Settings
@@ -201,12 +203,17 @@ Triggers live on Beats. When a Trigger condition becomes true, the Director can:
 
 Supported Trigger events:
 
+- Combat started.
+- Combat round started.
+- Combat turn started.
+- Initiative reached.
+- Combat ended.
 - Enemy defeated count.
 - Combatant defeated count.
 - Watched Token or Actor HP at or below a threshold.
 - Watched Token or Actor defeated.
 - Ally defeated.
-- Combat round at or above a number.
+- Combat round at or above a number for backward-compatible polling.
 
 Trigger options include:
 
@@ -214,6 +221,10 @@ Trigger options include:
 - Once-only behavior.
 - Cooldown for repeatable Triggers.
 - Count threshold.
+- Round number.
+- Turn number.
+- Initiative threshold.
+- Numeric comparison.
 - HP threshold.
 - HP threshold type: hit points or percent.
 - Token UUID filters.
@@ -230,7 +241,9 @@ Default Trigger behavior:
 - `selectBeat` Triggers do not require confirmation.
 - `runBeat` and `startSequence` Triggers require GM confirmation by default.
 - A once-only Trigger records fire-state before it runs, so repeated Foundry updates should not loop it.
+- Combat trigger fire-state includes combat/round/turn/initiative context where relevant, so round 2 in one Combat does not block round 2 in another Combat.
 - Reset Execution State clears Trigger fire-state for the selected Sequence.
+- Combat-triggered Action contexts include combat id/uuid, round, turn index, one-based turn number, active combatant data, initiative, Scene id/uuid, and dry-run/simulated flags.
 
 ## Foundry Native Actions
 
@@ -384,7 +397,8 @@ Available API methods:
 - `registerActionType(actionType)`.
 - `validateActionConfig(action, context)`.
 - `requestExecution({ sequenceId, beatId, actionId, dryRun, scene })`.
-- `evaluateTriggers(scene)`.
+- `evaluateTriggers(scene, context)`.
+- `simulateCombatTrigger(eventOrContext, options)`.
 - `resetTriggerState(sequenceId, scene)`.
 - `readSequenceMetadata(scene)`.
 - `subscribe(eventName, callback)`.

@@ -16,7 +16,7 @@ Run these tests on the remote Foundry VTT v14 server with the D&D 5e system. Rec
 
 ## Director UI
 
-- Confirm the module reports version 0.1.21.
+- Confirm the module reports version 0.1.23.
 - Confirm the Director shows Run and Plan mode tabs.
 - Switch to Plan mode, close the Director, reopen it, and confirm the client remembers Plan mode.
 - Switch back to Run mode and confirm the selected Beat controls are visible.
@@ -45,9 +45,11 @@ Run these tests on the remote Foundry VTT v14 server with the D&D 5e system. Rec
 - Disable and re-enable Actions.
 - Add quick combat setup Actions from selected canvas Tokens.
 - Add reinforcement wave Actions from selected canvas Tokens.
+- Add Combat Start, Round 2, and Combat End quick Triggers.
 - Edit Beat Triggers with the structured Trigger form.
 - Save a Trigger as Select Beat and confirm it remains non-executing.
 - Save a Trigger as Run Beat and confirm GM confirmation stays on by default.
+- Use Trigger test buttons for Combat Start, Round 1-4, Turn 1, Initiative 10, and Combat End.
 - Use Advanced Trigger JSON for an unusual Trigger payload and confirm it persists.
 - Export one Sequence.
 - Export all Scene Sequences.
@@ -89,6 +91,18 @@ Run these tests on the remote Foundry VTT v14 server with the D&D 5e system. Rec
 - Use Advanced Config JSON for an unusual native payload and confirm it persists.
 - Test missing and deleted targets.
 - Test actions targeting the wrong Scene.
+
+## Combat And Initiative Triggers
+
+- Configure `combatStarted` on a Beat and confirm it fires when Combat reaches round 1.
+- Configure `combatRoundStarted` for round 2 and confirm it fires once when round 2 begins.
+- Advance later rounds and confirm the round 2 Trigger does not refire.
+- Start a second Combat and confirm the round 2 Trigger can fire for the new Combat.
+- Configure `combatTurnStarted` for turn 1 and confirm it responds to the first tracker turn.
+- Configure `initiativeReached` with initiative 10 and comparison `lte`; confirm it fires when the active combatant reaches that threshold.
+- End Combat and confirm `combatEnded` fires.
+- Confirm combat-triggered log entries include trigger context details.
+- Confirm dry-run simulation does not create Combat, change round/turn, or move Tokens.
 
 ## SessionFlow
 

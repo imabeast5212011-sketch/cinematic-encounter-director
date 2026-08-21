@@ -69,6 +69,8 @@ await api.requestExecution({
 - `validateEncounterJson(input)` parses and normalizes a package without saving it.
 - `importEncounterJson(input, options)` imports a package into the current Scene. Default mode is `duplicate`.
 - `upsertSequence(sequence, options)` creates or replaces one Sequence object by id.
+- `evaluateTriggers(scene, context)` evaluates trigger conditions against a Scene with optional trigger context.
+- `simulateCombatTrigger(eventOrContext, options)` dry-runs combat trigger matching without changing Combat.
 
 All mutating methods require a GM user.
 
@@ -100,6 +102,8 @@ If a real UUID or external id is not available, leave that field blank and add a
 - `actionIds` must match and order the Action ids.
 - Imported data never executes immediately. The GM imports, reviews, validates, then runs it.
 - Do not invent UUIDs unless a live Foundry tool supplied them.
+- Use `combatStarted`, `combatRoundStarted`, `combatTurnStarted`, `initiativeReached`, and `combatEnded` for initiative-flow triggers.
+- Round triggers need `round: 1` or higher. Turn triggers use one-based `turn` values. Initiative triggers use `initiative` and a comparison such as `lte`.
 - Do not include Windows absolute file paths.
 - Do not include fields named `script`, `macro`, `command`, `code`, `function`, `handler`, or `callback`; imports reject them.
 
@@ -190,6 +194,57 @@ HP threshold trigger:
   "requiresConfirmation": false
 }
 ```
+
+Round trigger:
+
+```json
+{
+  "id": "trigger-round-two",
+  "name": "Round two escalation",
+  "enabled": true,
+  "event": "combatRoundStarted",
+  "action": "selectBeat",
+  "targetBeatId": "beat-reinforcements",
+  "round": 2,
+  "once": true,
+  "cooldownMs": 0,
+  "requiresConfirmation": false
+}
+```
+
+Initiative trigger:
+
+```json
+{
+  "id": "trigger-init-ten",
+  "name": "When initiative reaches 10",
+  "enabled": true,
+  "event": "initiativeReached",
+  "action": "selectBeat",
+  "targetBeatId": "beat-low-initiative-cue",
+  "initiative": 10,
+  "comparison": "lte",
+  "once": true,
+  "requiresConfirmation": false
+}
+```
+
+Combat end trigger:
+
+```json
+{
+  "id": "trigger-combat-ended",
+  "name": "After combat ends",
+  "enabled": true,
+  "event": "combatEnded",
+  "action": "selectBeat",
+  "targetBeatId": "beat-cleanup",
+  "once": true,
+  "requiresConfirmation": false
+}
+```
+
+Combat-triggered Actions receive `triggerContext` during validation and execution. It can include `combatId`, `combatUuid`, `round`, `turn`, `turnNumber`, `activeCombatantId`, `activeCombatantName`, `initiative`, `sceneId`, `sceneUuid`, `dryRun`, and `simulated`.
 
 ## Item, Handout, And Roll Examples
 

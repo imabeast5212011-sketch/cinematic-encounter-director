@@ -126,6 +126,11 @@
         "event": {
           "type": "string",
           "enum": [
+            "combatStarted",
+            "combatRoundStarted",
+            "combatTurnStarted",
+            "initiativeReached",
+            "combatEnded",
             "enemyDefeatedCount",
             "combatantDefeatedCount",
             "tokenHpAtOrBelow",
@@ -139,6 +144,8 @@
         "targetBeatId": { "type": "string", "maxLength": 80 },
         "count": { "type": "integer", "minimum": 1, "maximum": 999 },
         "round": { "type": "integer", "minimum": 1, "maximum": 999 },
+        "turn": { "type": "integer", "minimum": 1, "maximum": 999 },
+        "initiative": { "type": "number", "minimum": -999999, "maximum": 999999 },
         "threshold": { "type": "number", "minimum": -999999, "maximum": 999999 },
         "thresholdType": { "type": "string", "enum": ["hp", "percent"] },
         "comparison": { "type": "string", "enum": ["gte", "lte", "gt", "lt", "eq"] },

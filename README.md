@@ -1,6 +1,6 @@
 # Cinematic Encounter Director
 
-Version 0.1.21 for Foundry VTT v14.
+Version 0.1.23 for Foundry VTT v14.
 
 Cinematic Encounter Director is a GM-only tactical orchestration module for preparing and running encounters as Sequences, Beats, Actions, and optional Triggers. It coordinates Foundry-native Scene, Token, light, wall, door, Combat, camera, chat, item, Journal handout, roll-request, pause, and optional Playlist actions while leaving cinematic, audio, environmental, HUD, timeline, and session-planning systems in their own modules.
 
@@ -34,7 +34,7 @@ A **Sequence** is the encounter plan. It has a stable id, name, description, own
 
 A **Beat** is one manual moment in the encounter. It has a stable id, name, description, ordered Action ids, optional automation Triggers, manual execution state, optional color or icon, GM notes, confirmation controls, failure behavior, and an informational danger level.
 
-A **Trigger** is an optional GM-authored condition on a Beat. It can select a Beat, run a Beat, or start a Sequence when combatants are defeated, watched Tokens hit an HP threshold, watched Tokens are defeated, allies are defeated, or combat reaches a round.
+A **Trigger** is an optional GM-authored condition on a Beat. It can select a Beat, run a Beat, or start a Sequence when combat starts, a combat round or turn begins, initiative reaches a threshold, combat ends, combatants are defeated, watched Tokens hit an HP threshold, watched Tokens are defeated, or allies are defeated.
 
 An **Action** is a declarative instruction. It has a stable id, action type, name, enabled state, target adapter, config payload, execution mode, optional parallel group, failure policy, precondition payload, bounded delay, confirmation flag, validation result, execution result, and rollback metadata when supported.
 
@@ -42,7 +42,7 @@ No arbitrary JavaScript execution is allowed. Imported JSON is treated as untrus
 
 ## Storage
 
-Version 0.1.21 stores Scene-bound Sequence data in module-owned Scene flags:
+Version 0.1.23 stores Scene-bound Sequence data in module-owned Scene flags:
 
 ```text
 cinematic-encounter-director.sceneSequences
@@ -65,6 +65,8 @@ Use Plan mode and the Sequence editor to:
 - Build a basic combat setup from currently selected canvas Tokens.
 - Add a reinforcement wave from currently selected canvas Tokens.
 - Add common Beat Triggers from currently selected canvas Tokens.
+- Add combat-flow Triggers for combat start, round start, and combat end.
+- Dry-run simulated combat trigger events from the Trigger editor without changing Combat.
 - Configure common Trigger fields with form controls, with raw Trigger JSON kept as an advanced fallback.
 - Configure common Action fields with form controls, with raw Action config JSON kept as an advanced fallback.
 - Configure failure policy, execution mode, parallel group, delay, confirmation, and preconditions.
@@ -117,18 +119,23 @@ Beat Triggers are optional and GM-only. They are evaluated by one active GM clie
 
 Common editor shortcuts add:
 
+- Combat start.
+- Combat round 2.
+- Combat end.
 - Enemy defeated count.
 - Selected Token HP at or below 50 percent.
 - Selected ally/Token defeated.
 
-The editor exposes common Trigger fields directly. Trigger JSON is still stored on the Beat as an array and remains available under Advanced Trigger JSON. Example:
+Supported combat-flow trigger events are `combatStarted`, `combatRoundStarted`, `combatTurnStarted`, `initiativeReached`, `combatEnded`, and the backward-compatible polling event `combatRoundAtLeast`. Combat event payloads passed to Actions include combat id/uuid, round, turn index, one-based turn number, active combatant id/name/uuid, initiative, Scene id/uuid, and whether the execution is a dry-run simulation.
+
+The editor exposes relevant Trigger fields directly and includes dry-run buttons for Combat Start, rounds 1-4, Turn 1, Initiative 10, and Combat End. Trigger JSON is still stored on the Beat as an array and remains available under Advanced Trigger JSON. Example:
 
 ```json
 [
   {
-    "name": "Wave two after two enemies fall",
-    "event": "enemyDefeatedCount",
-    "count": 2,
+    "name": "Wave two at round two",
+    "event": "combatRoundStarted",
+    "round": 2,
     "action": "selectBeat",
     "once": true,
     "enabled": true
@@ -137,6 +144,8 @@ The editor exposes common Trigger fields directly. Trigger JSON is still stored 
 ```
 
 Set `action` to `runBeat` or `startSequence` for hands-free execution. Those actions require GM confirmation by default unless the Trigger JSON sets `"requiresConfirmation": false`.
+
+Once-only combat triggers are keyed by the relevant combat context. For example, a round 2 trigger fires once for that combat/round, not every time Foundry emits a round update; another Combat gets its own fire-state.
 
 ## Delays And Wait Points
 
@@ -261,7 +270,8 @@ Available methods:
 - `registerActionType(actionType)`.
 - `validateActionConfig(action, context)`.
 - `requestExecution({ sequenceId, beatId, actionId, dryRun, scene })`.
-- `evaluateTriggers(scene)`.
+- `evaluateTriggers(scene, context)`.
+- `simulateCombatTrigger(eventOrContext, options)`.
 - `resetTriggerState(sequenceId, scene)`.
 - `readSequenceMetadata(scene)`.
 - `subscribe(eventName, callback)`.
@@ -278,7 +288,7 @@ The import API validates JSON through the same untrusted-data path used by the U
 - If a lock remains after a disconnect, wait for the stale-lock timeout or reload with a GM client.
 - If imported references are unresolved, open each Action and remap UUIDs or external ids.
 - If native Playlist actions are unavailable, enable the native Playlist fallback world setting.
-- If Foundry appears to keep using an old Director version after update, force a full browser reload. Version 0.1.21 loads the runtime from a versioned folder path so browser module caches cannot reuse older `scripts/main.js` imports.
+- If Foundry appears to keep using an old Director version after update, force a full browser reload. Version 0.1.23 loads the runtime from `scripts/runtime-0.1.23/main.js` so browser module caches cannot reuse older `scripts/main.js` imports.
 
 ## Current Limitations
 
@@ -288,5 +298,5 @@ The import API validates JSON through the same untrusted-data path used by the U
 - COTS Character HUD uses the confirmed `game.cotsCharacterHud.socket` presentation API when present.
 - The locally inspected Cinematic Combat Timeline version exposes status/open-config API only, not countdown mutation API.
 - The Action editor now covers common native and integration fields with form controls. Raw JSON remains available for unusual payloads, imported data, and advanced provider-specific fields.
-- Remapping imported references is manual in v0.1.21.
+- Remapping imported references is manual in v0.1.23.
 - Player camera pan uses the module socket and should be tested carefully on the remote server.
